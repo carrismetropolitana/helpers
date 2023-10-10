@@ -11,37 +11,36 @@ const { Client } = require('@googlemaps/google-maps-services-js');
 require('dotenv').config();
 const { GOOGLE_API_KEY } = process.env;
 
-const formatSchools = async () => {
+const formatcsvRows = async () => {
   //
 
   //
-  // 0. Get latest data from Intermodal
 
-  console.log('• Parsing latest schools...');
+  console.log('• Parsing file...');
 
-  const txtData = fs.readFileSync('schools_torres_vedras.csv', { encoding: 'utf8' });
+  const txtData = fs.readFileSync('FILENAME_HERE.csv', { encoding: 'utf8' });
 
-  const rawSchoolsData = Papa.parse(txtData, { header: true });
+  const originalCsvData = Papa.parse(txtData, { header: true });
 
   //
   // 1. Format the raw data from Intermodal
 
-  const updatedSchools = [];
+  const updatedCsvRows = [];
 
-  console.log('• Preparing ' + rawSchoolsData.data.length + ' schools...');
+  console.log('• Preparing ' + originalCsvData.data.length + ' CSV rows...');
   console.log();
 
-  for (const [index, school] of rawSchoolsData.data.entries()) {
+  for (const [index, csvRow] of originalCsvData.data.entries()) {
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
-    process.stdout.write(`Updating school ${school.school_id} (${index}/${rawSchoolsData.data.length})`);
+    process.stdout.write(`Updating csvRow ${csvRow.csvRow_id} (${index}/${originalCsvData.data.length})`);
     //
     try {
       //
 
-      //   const geocoderQuery = `${school.school_name}, ${school.address}, ${school.postal_code}, ${school.locality}, Portugal`;
-      const geocoderQuery = `${school.school_name}, ${school.address}, ${school.municipality_dgeec}, Portugal`;
-      //   const geocoderQuery = `School at ${school.address}, ${school.postal_code} ${school.municipality_dgeec}, Portugal`;
+      //   const geocoderQuery = `${csvRow.csvRow_name}, ${csvRow.address}, ${csvRow.postal_code}, ${csvRow.locality}, Portugal`;
+      const geocoderQuery = `${csvRow.csvRow_name}, ${csvRow.address}, ${csvRow.municipality_dgeec}, Portugal`;
+      //   const geocoderQuery = `csvRow at ${csvRow.address}, ${csvRow.postal_code} ${csvRow.municipality_dgeec}, Portugal`;
 
       const client = new Client({});
       const response = await client.findPlaceFromText({
@@ -55,16 +54,16 @@ const formatSchools = async () => {
         timeout: 1000, // milliseconds
       });
       //
-      updatedSchools.push({
-        school_id: school.school_id,
-        school_name: school.school_name,
+      updatedCsvRows.push({
+        csvRow_id: csvRow.csvRow_id,
+        csvRow_name: csvRow.csvRow_name,
         coordinates_lat: response.data.candidates[0].geometry.location.lat,
         coordinates_lon: response.data.candidates[0].geometry.location.lng,
       });
-      console.log('Success', school.school_id, school.school_name, response.data.candidates[0].geometry.location.lat, response.data.candidates[0].geometry.location.lng);
+      console.log('Success', csvRow.csvRow_id, csvRow.csvRow_name, response.data.candidates[0].geometry.location.lat, response.data.candidates[0].geometry.location.lng);
     } catch (error) {
       //   console.log(error);
-      console.log('Error', school.school_id, school.school_name, error);
+      console.log('Error', csvRow.csvRow_id, csvRow.csvRow_name, error);
     }
     await delay(250);
     //
@@ -76,13 +75,13 @@ const formatSchools = async () => {
   console.log('• Saving data to CSV file.');
 
   // Use papaparse to produce the CSV string
-  const csvData = Papa.unparse(updatedSchools, { skipEmptyLines: 'greedy' });
+  const csvData = Papa.unparse(updatedCsvRows, { skipEmptyLines: 'greedy' });
   // Append the csv string to the file
-  fs.writeFileSync(`schools_result.csv`, csvData);
+  fs.writeFileSync(`RESULT_FILENAME.csv`, csvData);
 
   //
 
-  console.log('• Done! Updated ' + updatedSchools.length + ' schools.');
+  console.log('• Done! Updated ' + updatedCsvRows.length + ' csvRows.');
 };
 
 /* * *
@@ -96,7 +95,7 @@ const formatSchools = async () => {
   console.log('> Parsing started on ' + start.toISOString());
 
   /* * * * * * * * * * * * */
-  /* */ await formatSchools();
+  /* */ await formatcsvRows();
   /* * * * * * * * * * * * */
 
   const syncDuration = new Date() - start;
