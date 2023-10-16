@@ -1,5 +1,5 @@
 {
-    "name": "@carrismetropolitana/schedules-api-api",
+    "name": "@carrismetropolitana/helpers-carris",
     "version": "2023.1.1",
     "private": true,
     "main": "index.js",

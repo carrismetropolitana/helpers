@@ -1,11 +1,11 @@
 {
-    "name": "@carrismetropolitana/helpers-afetacao",
+    "name": "@carrismetropolitana/helpers-geojson-transform",
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
         "start": "node index.js"
     },
     "dependencies": {
-        "papaparse": "^5.4.1"
+        "@turf/turf": "^6.5.0"
     }
 }

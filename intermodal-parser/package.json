@@ -1,5 +1,5 @@
 {
-    "name": "codigos_postais",
+    "name": "@carrismetropolitana/helpers-intermodal-parser",
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {

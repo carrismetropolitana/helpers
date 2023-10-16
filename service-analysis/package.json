@@ -1,11 +1,11 @@
 {
-    "name": "intermodal-parser",
+    "name": "@carrismetropolitana/helpers-service-analysis",
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
         "start": "node index.js"
     },
     "dependencies": {
-        "@turf/turf": "^6.5.0"
+        "papaparse": "^5.4.1"
     }
 }

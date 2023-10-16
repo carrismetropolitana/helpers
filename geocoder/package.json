@@ -1,5 +1,5 @@
 {
-    "name": "intermodal-parser",
+    "name": "@carrismetropolitana/helpers-geocoder",
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
