@@ -1,95 +1,162 @@
-/* * * * * */
+/* * */
 /* SERVICE ANALYSIS */
 /* * */
-/* * */
+
+require('dotenv').config();
 
 /* * */
-/* IMPORTS */
+
+const SETTINGS = {
+  service_radius_meters: 400, // meters
+  max_travel_time_seconds: 120, // seconds
+};
+
+/* * */
+
 const fs = require('fs');
 const Papa = require('papaparse');
+const turf = require('@turf/turf');
 
-const findPostalCodes = async () => {
+/* * */
+
+(async () => {
   //
 
-  //
-  // 0. Get latest data from Intermodal
-
-  console.log('• Parsing raw list...');
-
-  const txtData = fs.readFileSync('postal_codes.csv', { encoding: 'utf8' });
-
-  const rawPostalCodes = Papa.parse(txtData, { header: true });
-
-  //
-  // 1. Format the raw data from Intermodal
-
-  const foundMatches = [];
-
-  console.log('• Preparing ' + rawPostalCodes.data.length + ' postal codes...');
   console.log();
+  console.log('* * * * * * * * * * * * * * * * * * * * * * * * * *');
+  console.log('> SERVICE ANALYSIS');
+  const start = new Date();
+  console.log('> Service Analysis started on ' + start.toISOString());
 
-  for (const [index, postalCode] of rawPostalCodes.data.entries()) {
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
-    process.stdout.write(`Updating postal code ${postalCode.school_id} (${index}/${rawPostalCodes.data.length})`);
+  //
+  // 1.
+  // Read input file and parse data as JSON
+
+  console.log('• Reading input file...');
+  const allLocationsCsv = fs.readFileSync('locations_input.csv', { encoding: 'utf8' });
+  const allLocationsData = Papa.parse(allLocationsCsv, { header: true });
+
+  //
+  // 2.
+  // Get all stops from API
+
+  console.log('• Fetching all stops from API...');
+  const allStopsResponse = await fetch('https://api.carrismetropolitana.pt/stops');
+  const allStopsData = await allStopsResponse.json();
+
+  //
+  // 3.
+  // Analyse service for each location
+
+  const serviceAnalysisResult = [];
+
+  for (const locationData of allLocationsData.data) {
     //
-    try {
-      //
 
-      const parsedPostalCode = postalCode.postal_code.split('-');
+    console.log(`• Preparing [${locationData.id}] ${locationData.name} ...`);
 
-      const response = await fetch(`https://json.geoapi.pt/codigo_postal/${parsedPostalCode[0]}-${parsedPostalCode[1]}?json=1`);
-      const responseData = await response.json();
+    //
+    // 3.1.
+    // Build service radius for this location
 
-      foundMatches.push({
-        postal_code: postalCode.postal_code,
-        address: postalCode.address,
-        lat: responseData.centroide[0],
-        lon: responseData.centroide[1],
-      });
+    console.log(locationData.lon, locationData.lat);
 
-      //
-    } catch (error) {
-      console.log('Error', postalCode.postal_code, index, error);
+    const locationPoint = turf.point([locationData.lon, locationData.lat]);
+    const serviceRadius = turf.buffer(locationPoint, SETTINGS.service_radius_meters, { units: 'meters' });
+
+    //
+    // 3.2.
+    // Get stops that are inside service radius
+
+    const allStopsInsideServiceRadius = allStopsData.forEach((stopData) => {
+      const point = turf.point([stopData.lat, stopData.lon]);
+      const serviceRadiusContainsPoint = turf.booleanContains(serviceRadius, point);
+      return serviceRadiusContainsPoint;
+    });
+
+    //
+    // 3.3.
+    // Calculate travel time for each stop inside service radius
+
+    const stopIdsThatServeThisLocation = new Set();
+
+    for (const stopData of allStopsInsideServiceRadius) {
+      const travelTimeInSecondsFromLocationToStop = await getDirectionsBetweenTwoPoints({ lat: locationData.lat, lon: locationData.lon }, { lat: stopData.lat, lon: stopData.lon });
+      if (travelTimeInSecondsFromLocationToStop < SETTINGS.max_travel_time_seconds) stopIdsThatServeThisLocation.add(stopData.id);
     }
-    await delay(250);
+
+    //
+    // 3.4.
+    // Save analysis result for this location
+
+    serviceAnalysisResult.push({
+      location_id: locationData.id,
+      location_name: locationData.name,
+      location_lat: locationData.lat,
+      location_lon: locationData.lon,
+      associated_stops: stopIdsThatServeThisLocation.values().join('|'),
+    });
+
+    //
+    // 3.5.
+    // Introduce artificial delay to avoid hitting any rate-limits
+
+    await delay(500);
+
     //
   }
 
   //
-  // 2. Save the formatted data into a JSON file
+  // 4.
+  // Save analysis result to CSV table
 
-  console.log('• Saving data to CSV file.');
-
-  // Use papaparse to produce the CSV string
-  const csvData = Papa.unparse(foundMatches, { skipEmptyLines: 'greedy' });
-  // Append the csv string to the file
-  fs.writeFileSync(`postal_codes_coordinates.csv`, csvData);
+  console.log('• Saving service analysis result to CSV file...');
+  const serviceAnalysisCsv = Papa.unparse(serviceAnalysisResult, { skipEmptyLines: 'greedy' });
+  fs.writeFileSync(`service_analysis_result.csv`, serviceAnalysisCsv);
+  console.log('• Done! Updated ' + foundMatches.length + ' postal codes.');
 
   //
-
-  console.log('• Done! Updated ' + foundMatches.length + ' postal codes.');
-};
-
-/* * *
- * ONE TIME EXECUTION
- */
-(async () => {
-  console.log();
-  console.log('* * * * * * * * * * * * * * * * * * * * * * * * * *');
-  console.log('> PARSER');
-  const start = new Date();
-  console.log('> Parsing started on ' + start.toISOString());
-
-  /* * * * * * * * * * * * */
-  /* */ await findPostalCodes();
-  /* * * * * * * * * * * * */
 
   const syncDuration = new Date() - start;
   console.log('> Operation took ' + syncDuration / 1000 + ' seconds.');
   console.log('* * * * * * * * * * * * * * * * * * * * * * * * * *');
   console.log();
+
+  //
 })();
+
+/* * */
+
+async function getDirectionsBetweenTwoPoints(pointA, pointB) {
+  //
+
+  const requestUrl = 'https://api.openrouteservice.org/v2/directions/foot-walking';
+
+  const requestHeaders = {
+    Accept: 'application/json, application/geo+json; charset=utf-8',
+    Authorization: process.env.ORS_API_KEY,
+    'Content-Type': 'application/json; charset=utf-8',
+  };
+
+  const requestBody = {
+    units: 'm',
+    geometry: 'true',
+    elevation: 'true',
+    preference: 'shortest',
+    coordinates: [
+      [pointA.lon, pointA.lat],
+      [pointB.lon, pointB.lat],
+    ],
+  };
+
+  const directionsApiResponse = await fetch(requestUrl, { method: 'POST', headers: requestHeaders, body: JSON.stringify(requestBody) });
+  const directionsApiData = await directionsApiResponse.json();
+
+  const directionsDataSorted = directionsApiData.routes.sort((a, b) => a.summary.duration - b.summary.duration);
+  return directionsDataSorted;
+
+  //
+}
 
 function delay(miliseconds = 0) {
   return new Promise((resolve) => setTimeout(resolve, miliseconds));
