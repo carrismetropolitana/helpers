@@ -7,8 +7,8 @@ require('dotenv').config();
 /* * */
 
 const SETTINGS = {
-  service_radius_meters: 400, // meters
-  max_travel_time_seconds: 120, // seconds
+  service_radius_meters: 1000, // meters
+  max_travel_time_seconds: 180, // seconds
 };
 
 /* * */
@@ -80,8 +80,11 @@ const turf = require('@turf/turf');
 
     for (const stopData of allStopsInsideServiceRadius) {
       const travelTimeInSecondsFromLocationToStop = await getDirectionsBetweenTwoPoints([locationData.lon, locationData.lat], [stopData.lon, stopData.lat]);
-      if (!travelTimeInSecondsFromLocationToStop?.length) continue;
-      else if (travelTimeInSecondsFromLocationToStop[0]?.summary?.duration < SETTINGS.max_travel_time_seconds) stopIdsThatServeThisLocation.add(stopData.id);
+      if (travelTimeInSecondsFromLocationToStop && travelTimeInSecondsFromLocationToStop.length) {
+        if (travelTimeInSecondsFromLocationToStop[0]?.summary?.duration < SETTINGS.max_travel_time_seconds) {
+          stopIdsThatServeThisLocation.add(stopData.id);
+        }
+      }
     }
 
     //
