@@ -7,8 +7,8 @@ require('dotenv').config();
 /* * */
 
 const SETTINGS = {
-  service_radius_meters: 1000, // meters
-  max_travel_time_seconds: 180, // seconds
+  service_radius_meters: 500, // meters
+  max_travel_time_seconds: 600, // seconds
 };
 
 /* * */
@@ -52,8 +52,6 @@ const turf = require('@turf/turf');
 
   for (const locationData of allLocationsData.data) {
     //
-
-    console.log(`• Preparing [${locationData.id}] ${locationData.name} ...`);
 
     //
     // 3.1.
@@ -101,13 +99,7 @@ const turf = require('@turf/turf');
 
     serviceAnalysisResult.push(analysisResult);
 
-    console.log(`• [${analysisResult.id}] ${analysisResult.name} | ${analysisResult.stops}`);
-
-    //
-    // 3.5.
-    // Introduce artificial delay to avoid hitting any rate-limits
-
-    await delay(500);
+    console.log(`• (${analysisResult.id}) ${analysisResult.name} > [${analysisResult.stops}]`);
 
     //
   }
@@ -119,7 +111,7 @@ const turf = require('@turf/turf');
   console.log('• Saving service analysis result to CSV file...');
   const serviceAnalysisCsv = Papa.unparse(serviceAnalysisResult, { skipEmptyLines: 'greedy' });
   fs.writeFileSync(`service_analysis_result.csv`, serviceAnalysisCsv);
-  console.log('• Done! Updated ' + foundMatches.length + ' postal codes.');
+  console.log('• Done! Updated ' + serviceAnalysisResult.length + ' postal codes.');
 
   //
 
@@ -136,7 +128,10 @@ const turf = require('@turf/turf');
 async function getDirectionsBetweenTwoPoints(pointA, pointB) {
   //
 
-  const requestUrl = 'https://api.openrouteservice.org/v2/directions/foot-walking';
+  await delay(0); // Introduce artificial delay to avoid hitting any rate-limits
+
+  //   const requestUrl = 'https://api.openrouteservice.org/v2/directions/foot-walking';
+  const requestUrl = 'http://localhost:8080/ors/v2/directions/foot-walking';
 
   const requestHeaders = {
     Accept: 'application/json, application/geo+json; charset=utf-8',
@@ -146,8 +141,8 @@ async function getDirectionsBetweenTwoPoints(pointA, pointB) {
 
   const requestBody = {
     units: 'm',
-    geometry: 'true',
-    elevation: 'true',
+    geometry: false,
+    elevation: false,
     preference: 'shortest',
     coordinates: [pointA, pointB],
   };
