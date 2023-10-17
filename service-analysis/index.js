@@ -59,17 +59,15 @@ const turf = require('@turf/turf');
     // 3.1.
     // Build service radius for this location
 
-    console.log(locationData.lon, locationData.lat);
-
-    const locationPoint = turf.point([locationData.lon, locationData.lat]);
+    const locationPoint = turf.point([parseFloat(locationData.lon), parseFloat(locationData.lat)]);
     const serviceRadius = turf.buffer(locationPoint, SETTINGS.service_radius_meters, { units: 'meters' });
 
     //
     // 3.2.
     // Get stops that are inside service radius
 
-    const allStopsInsideServiceRadius = allStopsData.forEach((stopData) => {
-      const point = turf.point([stopData.lat, stopData.lon]);
+    const allStopsInsideServiceRadius = allStopsData.filter((stopData) => {
+      const point = turf.point([stopData.lon, stopData.lat]);
       const serviceRadiusContainsPoint = turf.booleanContains(serviceRadius, point);
       return serviceRadiusContainsPoint;
     });
@@ -81,21 +79,26 @@ const turf = require('@turf/turf');
     const stopIdsThatServeThisLocation = new Set();
 
     for (const stopData of allStopsInsideServiceRadius) {
-      const travelTimeInSecondsFromLocationToStop = await getDirectionsBetweenTwoPoints({ lat: locationData.lat, lon: locationData.lon }, { lat: stopData.lat, lon: stopData.lon });
-      if (travelTimeInSecondsFromLocationToStop < SETTINGS.max_travel_time_seconds) stopIdsThatServeThisLocation.add(stopData.id);
+      const travelTimeInSecondsFromLocationToStop = await getDirectionsBetweenTwoPoints([locationData.lon, locationData.lat], [stopData.lon, stopData.lat]);
+      if (!travelTimeInSecondsFromLocationToStop?.length) continue;
+      else if (travelTimeInSecondsFromLocationToStop[0]?.summary?.duration < SETTINGS.max_travel_time_seconds) stopIdsThatServeThisLocation.add(stopData.id);
     }
 
     //
     // 3.4.
     // Save analysis result for this location
 
-    serviceAnalysisResult.push({
-      location_id: locationData.id,
-      location_name: locationData.name,
-      location_lat: locationData.lat,
-      location_lon: locationData.lon,
-      associated_stops: stopIdsThatServeThisLocation.values().join('|'),
-    });
+    const analysisResult = {
+      id: locationData.id,
+      name: locationData.name,
+      lat: locationData.lat,
+      lon: locationData.lon,
+      stops: Array.from(stopIdsThatServeThisLocation).join('|'),
+    };
+
+    serviceAnalysisResult.push(analysisResult);
+
+    console.log(`• [${analysisResult.id}] ${analysisResult.name} | ${analysisResult.stops}`);
 
     //
     // 3.5.
@@ -143,16 +146,13 @@ async function getDirectionsBetweenTwoPoints(pointA, pointB) {
     geometry: 'true',
     elevation: 'true',
     preference: 'shortest',
-    coordinates: [
-      [pointA.lon, pointA.lat],
-      [pointB.lon, pointB.lat],
-    ],
+    coordinates: [pointA, pointB],
   };
 
   const directionsApiResponse = await fetch(requestUrl, { method: 'POST', headers: requestHeaders, body: JSON.stringify(requestBody) });
   const directionsApiData = await directionsApiResponse.json();
 
-  const directionsDataSorted = directionsApiData.routes.sort((a, b) => a.summary.duration - b.summary.duration);
+  const directionsDataSorted = directionsApiData.routes?.sort((a, b) => a.summary.duration - b.summary.duration);
   return directionsDataSorted;
 
   //
