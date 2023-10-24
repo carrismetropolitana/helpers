@@ -18,7 +18,7 @@ const formatStops = async () => {
 
   console.log('• Fetching Intermodal for latest updates...');
 
-  const rawData = await fetch('https://api.intermodal.pt/v1/tml/stops').then((res) => res.json());
+  const rawData = await fetch('https://api.intermodal.pt/v1/stops/full').then((res) => res.json());
 
   //
   // 1. Format the raw data from Intermodal
@@ -28,13 +28,17 @@ const formatStops = async () => {
   console.log('• Preparing ' + rawData.length + ' stops...');
 
   for (const stop of rawData) {
-    // Ignore if no ID
-    if (!stop.tml_id) continue;
+    //
 
-    if (stop.tml_id.substring(0, 2) !== '19') continue;
+    // Check if this stop is for Carris Metropolitana
+    const stopOperator = stop.operators.find((item) => item.operator_id === 1);
+    if (!stopOperator) continue;
+
+    if (stopOperator.stop_ref.substring(0, 2) !== '12') continue;
+
     // Create file
     result.push({
-      stop_id: stop.tml_id,
+      stop_id: stopOperator.stop_ref,
       stop_lat: stop.lat.toFixed(6),
       stop_lon: stop.lon.toFixed(6),
       stop_name: stop.official_name,
