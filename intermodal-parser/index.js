@@ -41,7 +41,7 @@ const formatStops = async () => {
       stop_id: stopOperator.stop_ref,
       stop_lat: stop.lat.toFixed(6),
       stop_lon: stop.lon.toFixed(6),
-      stop_name: stop.official_name,
+      stop_name: stopOperator.name,
       imd_id: stop.id,
     });
   }
