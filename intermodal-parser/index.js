@@ -34,7 +34,7 @@ const formatStops = async () => {
     const stopOperator = stop.operators.find((item) => item.operator_id === 1);
     if (!stopOperator) continue;
 
-    if (stopOperator.stop_ref.substring(0, 2) !== '12') continue;
+    if (stopOperator.stop_ref.substring(0, 2) !== '16') continue;
 
     // Create file
     result.push({
