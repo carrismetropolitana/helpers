@@ -1,0 +1,12 @@
+{
+    "name": "@carrismetropolitana/helpers-geojson-to-gtfs-shape",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "@turf/turf": "6.5",
+        "papaparse": "^5.4.1"
+    }
+}
