@@ -12,7 +12,7 @@ const start = async () => {
   //
   // 0. Get latest data from Intermodal
 
-  const txtData = fs.readFileSync('mts.geojson', { encoding: 'utf8' });
+  const txtData = fs.readFileSync('mts_3_0_1.geojson', { encoding: 'utf8' });
   const geojsonData = JSON.parse(txtData);
 
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
@@ -57,11 +57,12 @@ const start = async () => {
       //
     }
 
+    const allShapesTxtData = Papa.unparse(allShapesData);
+    fs.writeFileSync(`shp_${patternId}.csv`, allShapesTxtData);
+    allShapesData = [];
+
     //
   }
-
-  const allShapesTxtData = Papa.unparse(allShapesData);
-  fs.writeFileSync(`shapes.csv`, allShapesTxtData);
 
   //
 
