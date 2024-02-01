@@ -12,11 +12,11 @@ const start = async () => {
   //
   // 0. Get latest data from Intermodal
 
-  const txtData = fs.readFileSync('mts_3_0_1.geojson', { encoding: 'utf8' });
+  const txtData = fs.readFileSync('3_0_1.geojson', { encoding: 'utf8' });
   const geojsonData = JSON.parse(txtData);
 
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  const sortedGeojsonData = geojsonData.features.sort((a, b) => collator.compare(a.properties?.pattern_id, b.properties?.pattern_id));
+  const sortedGeojsonData = geojsonData.features; //.sort((a, b) => collator.compare(a.properties?.pattern_id, b.properties?.pattern_id));
 
   let allShapesData = [];
 
@@ -24,7 +24,7 @@ const start = async () => {
   for (const feature of sortedGeojsonData) {
     //
 
-    const patternId = feature.properties?.pattern_id;
+    const patternId = '3_0_1';
 
     //
 

@@ -41,13 +41,23 @@ const Papa = require('papaparse');
   for (const stopData of allStopsData) {
     //
 
-    allStopsWithLines.push({
-      stop_id: stopData.id,
-      stop_name: stopData.name,
-      stop_lat: stopData.lat,
-      stop_lon: stopData.lon,
-      lines: stopData.lines?.join('|'),
-    });
+    if (!stopData.lines) continue;
+
+    let areas = '';
+
+    for (const lineId of stopData.lines) {
+      areas += lineId.substring(0, 1);
+    }
+
+    if (areas.includes('1') && areas.includes('2')) {
+      allStopsWithLines.push({
+        stop_id: stopData.id,
+        stop_name: stopData.name,
+        stop_lat: stopData.lat,
+        stop_lon: stopData.lon,
+        lines: stopData.lines?.join('|'),
+      });
+    }
 
     allStopsWithRoutes.push({
       stop_id: stopData.id,
