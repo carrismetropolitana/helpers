@@ -1,0 +1,14 @@
+{
+    "name": "@carrismetropolitana/helpers-intermodal-parser",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "dotenv": "16.4.1",
+        "mongodb": "6.3.0",
+        "papaparse": "^5.4.1",
+        "tunnel-ssh": "5.1.2"
+    }
+}
