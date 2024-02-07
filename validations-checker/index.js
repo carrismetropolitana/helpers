@@ -44,9 +44,9 @@ const Papa = require('papaparse');
   };
 
   const apex311 = {
-    operator: '41',
+    operator: '42',
     'transaction.transactionDate': {
-      $gte: '2024-01-25T04:00:00',
+      $gte: '2024-02-05T04:00:00',
       //   $lte: '2024-02-01T03:59:59',
     },
     // 'transaction.apexVersion': '3.1.1',
@@ -64,12 +64,9 @@ const Papa = require('papaparse');
   });
 
   resultStream.on('data', function (doc) {
-    console.log(counter);
+    console.log('counter', counter, 'apexVersion', doc.transaction.apexVersion, 'apexTransactionVersion', doc.transaction.apexTransactionVersion);
     counter++;
-    console.log('apexVersion', doc.transaction.apexVersion, 'apexTransactionVersion', doc.transaction.apexTransactionVersion);
-    return;
-    if (!doc.transaction.apexVersion.startsWith('3')) return;
-    const papaparseOptions = { quotes: true, header: true };
+    // if (!doc.transaction.apexVersion.startsWith('3')) return;
     const csvData = Papa.unparse(
       [
         {
@@ -129,9 +126,9 @@ const Papa = require('papaparse');
           _class: doc._class,
         },
       ],
-      papaparseOptions
+      { quotes: true, header: isFirstDoc }
     );
-    fs.appendFileSync(`result.csv`, csvData);
+    fs.appendFileSync(`/outputs/result.csv`, csvData);
     if (isFirstDoc) isFirstDoc = false;
   });
 

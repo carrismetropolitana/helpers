@@ -31,6 +31,7 @@ const Papa = require('papaparse');
   //
   // 2. Prepare variables
 
+  let allStopsWithoutService = [];
   let allStopsWithLines = [];
   let allStopsWithRoutes = [];
   let allStopsWithPatterns = [];
@@ -41,7 +42,10 @@ const Papa = require('papaparse');
   for (const stopData of allStopsData) {
     //
 
-    if (!stopData.lines) continue;
+    if (stopData.lines) continue;
+
+    allStopsWithoutService.push({ stop_id: stopData.id, stop_name: stopData.name });
+    continue;
 
     let areas = '';
 
@@ -81,16 +85,18 @@ const Papa = require('papaparse');
   //
   // 4. Create the CSV tables
 
-  const allStopsWithLinesCsv = Papa.unparse(allStopsWithLines);
-  const allStopsWithRoutesCsv = Papa.unparse(allStopsWithRoutes);
-  const allStopsWithPatternsCsv = Papa.unparse(allStopsWithPatterns);
+  const allStopsWithoutServiceCsv = Papa.unparse(allStopsWithoutService);
+  //   const allStopsWithLinesCsv = Papa.unparse(allStopsWithLines);
+  //   const allStopsWithRoutesCsv = Papa.unparse(allStopsWithRoutes);
+  //   const allStopsWithPatternsCsv = Papa.unparse(allStopsWithPatterns);
 
   //
   // 4. Save the CSV data to the disk
 
-  fs.writeFileSync('stops-lines.csv', allStopsWithLinesCsv);
-  fs.writeFileSync('stops-routes.csv', allStopsWithRoutesCsv);
-  fs.writeFileSync('stops-patterns.csv', allStopsWithPatternsCsv);
+  fs.writeFileSync('stops-without-service.csv', allStopsWithoutServiceCsv);
+  //   fs.writeFileSync('stops-lines.csv', allStopsWithLinesCsv);
+  //   fs.writeFileSync('stops-routes.csv', allStopsWithRoutesCsv);
+  //   fs.writeFileSync('stops-patterns.csv', allStopsWithPatternsCsv);
 
   //
 
