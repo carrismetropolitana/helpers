@@ -18,7 +18,7 @@ const formatStops = async () => {
 
   console.log('• Fetching Intermodal for latest updates...');
 
-  const rawData = await fetch('https://api.intermodal.pt/v1/stops/full').then((res) => res.json());
+  const rawData = await fetch('https://api.intermodal.pt/v1/regions/1/stops/full').then((res) => res.json());
 
   //
   // 1. Format the raw data from Intermodal
@@ -34,7 +34,7 @@ const formatStops = async () => {
     const stopOperator = stop.operators.find((item) => item.operator_id === 1);
     if (!stopOperator) continue;
 
-    if (stopOperator.stop_ref.substring(0, 2) !== '13') continue;
+    // if (stopOperator.stop_ref.substring(0, 2) !== '13') continue;
 
     // Create file
     result.push({
@@ -42,6 +42,7 @@ const formatStops = async () => {
       stop_lat: stop.lat.toFixed(6),
       stop_lon: stop.lon.toFixed(6),
       stop_name: stopOperator.name,
+      has_shelter: stop.has_shelter,
       imd_id: stop.id,
     });
   }
