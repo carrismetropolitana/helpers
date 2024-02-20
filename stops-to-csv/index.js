@@ -42,10 +42,10 @@ const Papa = require('papaparse');
   for (const stopData of allStopsData) {
     //
 
-    if (stopData.lines) continue;
+    if (!stopData.lines) continue;
 
-    allStopsWithoutService.push({ stop_id: stopData.id, stop_name: stopData.name });
-    continue;
+    // allStopsWithoutService.push({ stop_id: stopData.id, stop_name: stopData.name });
+    // continue;
 
     let areas = '';
 
@@ -53,7 +53,7 @@ const Papa = require('papaparse');
       areas += lineId.substring(0, 1);
     }
 
-    if (areas.includes('1') && areas.includes('2')) {
+    if (areas.includes('1')) {
       allStopsWithLines.push({
         stop_id: stopData.id,
         stop_name: stopData.name,
@@ -63,21 +63,21 @@ const Papa = require('papaparse');
       });
     }
 
-    allStopsWithRoutes.push({
-      stop_id: stopData.id,
-      stop_name: stopData.name,
-      stop_lat: stopData.lat,
-      stop_lon: stopData.lon,
-      routes: stopData.routes?.join('|'),
-    });
+    // allStopsWithRoutes.push({
+    //   stop_id: stopData.id,
+    //   stop_name: stopData.name,
+    //   stop_lat: stopData.lat,
+    //   stop_lon: stopData.lon,
+    //   routes: stopData.routes?.join('|'),
+    // });
 
-    allStopsWithPatterns.push({
-      stop_id: stopData.id,
-      stop_name: stopData.name,
-      stop_lat: stopData.lat,
-      stop_lon: stopData.lon,
-      patterns: stopData.patterns?.join('|'),
-    });
+    // allStopsWithPatterns.push({
+    //   stop_id: stopData.id,
+    //   stop_name: stopData.name,
+    //   stop_lat: stopData.lat,
+    //   stop_lon: stopData.lon,
+    //   patterns: stopData.patterns?.join('|'),
+    // });
 
     //
   }
@@ -85,16 +85,16 @@ const Papa = require('papaparse');
   //
   // 4. Create the CSV tables
 
-  const allStopsWithoutServiceCsv = Papa.unparse(allStopsWithoutService);
-  //   const allStopsWithLinesCsv = Papa.unparse(allStopsWithLines);
+  //   const allStopsWithoutServiceCsv = Papa.unparse(allStopsWithoutService);
+  const allStopsWithLinesCsv = Papa.unparse(allStopsWithLines);
   //   const allStopsWithRoutesCsv = Papa.unparse(allStopsWithRoutes);
   //   const allStopsWithPatternsCsv = Papa.unparse(allStopsWithPatterns);
 
   //
   // 4. Save the CSV data to the disk
 
-  fs.writeFileSync('stops-without-service.csv', allStopsWithoutServiceCsv);
-  //   fs.writeFileSync('stops-lines.csv', allStopsWithLinesCsv);
+  //   fs.writeFileSync('stops-without-service.csv', allStopsWithoutServiceCsv);
+  fs.writeFileSync('stops-lines.csv', allStopsWithLinesCsv);
   //   fs.writeFileSync('stops-routes.csv', allStopsWithRoutesCsv);
   //   fs.writeFileSync('stops-patterns.csv', allStopsWithPatternsCsv);
 
