@@ -34,7 +34,7 @@ const formatStops = async () => {
     const stopOperator = stop.operators.find((item) => item.operator_id === 1);
     if (!stopOperator) continue;
 
-    // if (stopOperator.stop_ref.substring(0, 2) !== '13') continue;
+    if (stopOperator.stop_ref.substring(0, 2) !== '18') continue;
 
     // Create file
     result.push({
@@ -42,7 +42,7 @@ const formatStops = async () => {
       stop_lat: stop.lat.toFixed(6),
       stop_lon: stop.lon.toFixed(6),
       stop_name: stopOperator.name,
-      has_shelter: stop.has_shelter,
+      //   has_shelter: stop.has_shelter,
       imd_id: stop.id,
     });
   }
