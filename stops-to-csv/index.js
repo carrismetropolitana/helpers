@@ -53,15 +53,15 @@ const Papa = require('papaparse');
       areas += lineId.substring(0, 1);
     }
 
-    if (areas.includes('1')) {
-      allStopsWithLines.push({
-        stop_id: stopData.id,
-        stop_name: stopData.name,
-        stop_lat: stopData.lat,
-        stop_lon: stopData.lon,
-        lines: stopData.lines?.join('|'),
-      });
-    }
+    // if (areas.includes('1')) {
+    allStopsWithLines.push({
+      stop_id: stopData.id,
+      stop_name: stopData.name,
+      stop_lat: stopData.lat,
+      stop_lon: stopData.lon,
+      lines: stopData.lines?.join('|'),
+    });
+    // }
 
     // allStopsWithRoutes.push({
     //   stop_id: stopData.id,
