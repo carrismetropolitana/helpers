@@ -29,7 +29,7 @@ const formatStops = async () => {
     const stopOperator = stop.operators.find((item) => item.operator_id === 1);
     if (!stopOperator) continue;
 
-    if (stopOperator.name.substring(0, 2) !== '02') continue;
+    // if (stopOperator.name.substring(0, 2) !== '02') continue;
 
     // Create file
     result.push({
