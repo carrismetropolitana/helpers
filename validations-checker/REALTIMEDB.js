@@ -69,10 +69,16 @@ class REALTIMEDB {
       await this.client.connect();
       // Setup databases
       this.CoreManagement = this.client.db('CoreManagement');
+      this.FileManagement = this.client.db('FileManagement');
+      this.SalesManagement = this.client.db('SalesManagement');
       this.ValidationsManagement = this.client.db('ValidationsManagement');
+      this.LocationManagement = this.client.db('LocationManagement');
       // Setup collections
       this.VehicleEvents = this.CoreManagement.collection('VehicleEvents');
+      this.TransactionEntity = this.FileManagement.collection('transactionEntity');
+      this.SalesEntity = this.SalesManagement.collection('salesEntity');
       this.ValidationEntity = this.ValidationsManagement.collection('validationEntity');
+      this.LocationEntity = this.LocationManagement.collection('locationEntity');
     } catch (error) {
       console.error('Error connecting to REALTIMEDB (MongoDB):', error);
     }
