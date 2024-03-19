@@ -25,24 +25,29 @@ const Papa = require('papaparse');
 
   /* * */
 
+  const operatorId = '42';
+  const samSerialNumber = '2932060902';
   const startDate = '2024-01-01T04:00:00';
-  const endDate = '2024-01-02T03:59:59';
+  const endDate = '2024-01-13T03:59:59';
 
   /* * */
 
   const salesBetweenDates = {
-    'transaction.operatorLongID': '44',
+    'transaction.operatorLongID': operatorId,
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
+    'transaction.macDataFields.samSerialNumber': samSerialNumber,
   };
 
   const validationsBetweenDates = {
-    'transaction.operatorLongID': '44',
+    'transaction.operatorLongID': operatorId,
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
+    'transaction.macDataFields.samSerialNumber': samSerialNumber,
   };
 
   const locationsBetweenDates = {
-    'transaction.operatorLongID': '44',
+    'transaction.operatorLongID': operatorId,
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
+    'transaction.macDataFields.samSerialNumber': samSerialNumber,
   };
 
   /* * */
@@ -81,6 +86,7 @@ const Papa = require('papaparse');
           transactionDate: doc.transaction?.transactionDate || 'N/A',
           samSerialNumber: doc.transaction.macDataFields?.samSerialNumber || 'N/A',
           aseCounterValue: doc.transaction.macDataFields?.aseCounterValue || 'N/A',
+          stopLongID: doc.transaction.stopLongID || 'N/A',
         },
       ],
       {
@@ -119,6 +125,7 @@ const Papa = require('papaparse');
           transactionDate: doc.transaction?.transactionDate || 'N/A',
           samSerialNumber: doc.transaction.macDataFields?.samSerialNumber || 'N/A',
           aseCounterValue: doc.transaction.macDataFields?.aseCounterValue || 'N/A',
+          stopLongID: doc.transaction.stopLongID || 'N/A',
         },
       ],
       {
@@ -157,6 +164,7 @@ const Papa = require('papaparse');
           transactionDate: doc.transaction?.transactionDate || 'N/A',
           samSerialNumber: doc.transaction.macDataFields?.samSerialNumber || 'N/A',
           aseCounterValue: doc.transaction.macDataFields?.aseCounterValue || 'N/A',
+          stopLongID: doc.transaction.stopLongID || 'N/A',
         },
       ],
       {
