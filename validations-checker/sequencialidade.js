@@ -4,11 +4,9 @@ const fs = require('fs');
 require('dotenv').config();
 const REALTIMEDB = require('./REALTIMEDB');
 const Papa = require('papaparse');
+
 /* * */
 
-/* * *
- * ONE TIME EXECUTION
- */
 (async () => {
   console.log();
   console.log('* * * * * * * * * * * * * * * * * * * * * * * * * *');
