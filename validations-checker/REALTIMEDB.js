@@ -63,7 +63,7 @@ class REALTIMEDB {
         minPoolSize: 2,
         maxPoolSize: 200,
         directConnection: true,
-        readPreference: 'primaryPreferred',
+        readPreference: 'nearest',
       });
       // Connect to MongoDB client
       await this.client.connect();

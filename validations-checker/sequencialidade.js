@@ -28,7 +28,7 @@ const Papa = require('papaparse');
   const operatorId = '42';
   const samSerialNumber = '2932060902';
   const startDate = '2024-01-01T04:00:00';
-  const endDate = '2024-01-13T03:59:59';
+  const endDate = '2024-01-02T03:59:59';
 
   /* * */
 
