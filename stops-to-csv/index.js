@@ -3,8 +3,6 @@
 /* * */
 /* * */
 
-/* * */
-/* IMPORTS */
 const fs = require('fs');
 const Papa = require('papaparse');
 

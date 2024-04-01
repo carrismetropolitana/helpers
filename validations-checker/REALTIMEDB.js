@@ -35,11 +35,13 @@ class REALTIMEDB {
   async setupSshTunnel() {
     return new Promise((resolve, reject) => {
       try {
+        console.log('tunnel connection...');
         // Check if there is already an active SSH connection
         if (this.sshTunnelConnection || global._sshTunnelConnection) return resolve();
         // Setup the tunnel connection
         createTunnel(this.tunnelOptions, this.serverOptions, this.sshOptions, this.forwardOptions)
           .then((tunnel) => {
+            console.log('tunnel connection here...');
             if (process.env.NODE_ENV === 'development') global._sshTunnelConnection = tunnel;
             else this.sshTunnelConnection = tunnel;
             resolve();
@@ -56,8 +58,11 @@ class REALTIMEDB {
 
   async connect() {
     try {
+      console.log('connect() connection...');
       // Establish SSH tunnel
       await this.setupSshTunnel();
+
+      console.log('tunnel done...');
       // Setup MongoDB connection
       this.client = new MongoClient(process.env.REALTIMEDB_MONGODB_URI, {
         minPoolSize: 2,
@@ -67,6 +72,7 @@ class REALTIMEDB {
       });
       // Connect to MongoDB client
       await this.client.connect();
+      console.log('client done...');
       // Setup databases
       this.CoreManagement = this.client.db('CoreManagement');
       this.FileManagement = this.client.db('FileManagement');

@@ -23,36 +23,36 @@ const Papa = require('papaparse');
 
   /* * */
 
-  const operatorId = '42';
-  const samSerialNumber = '2932060902';
-  const startDate = '2024-01-01T04:00:00';
-  const endDate = '2024-01-02T03:59:59';
+  const operatorIds = ['41', '42', '43', '44'];
+  const samSerialNumber = 2932062388;
+  const startDate = '2024-01-02T04:00:00';
+  const endDate = '2024-01-03T03:59:59';
 
   /* * */
 
   const salesBetweenDates = {
-    'transaction.operatorLongID': operatorId,
+    'transaction.operatorLongID': { $in: operatorIds },
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
-    'transaction.macDataFields.samSerialNumber': samSerialNumber,
+    // 'transaction.macDataFields.samSerialNumber': samSerialNumber,
   };
 
   const validationsBetweenDates = {
-    'transaction.operatorLongID': operatorId,
+    'transaction.operatorLongID': { $in: operatorIds },
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
-    'transaction.macDataFields.samSerialNumber': samSerialNumber,
+    // 'transaction.macDataFields.samSerialNumber': samSerialNumber,
   };
 
   const locationsBetweenDates = {
-    'transaction.operatorLongID': operatorId,
+    'transaction.operatorLongID': { $in: operatorIds },
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
-    'transaction.macDataFields.samSerialNumber': samSerialNumber,
+    // 'transaction.macDataFields.samSerialNumber': samSerialNumber,
   };
 
   /* * */
 
-  const salesStream = REALTIMEDB.SalesEntity.find(salesBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  //   const salesStream = REALTIMEDB.SalesEntity.find(salesBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
   const validationsStream = REALTIMEDB.ValidationEntity.find(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
-  const locationsStream = REALTIMEDB.LocationEntity.find(locationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  //   const locationsStream = REALTIMEDB.LocationEntity.find(locationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
 
   //
 
@@ -66,42 +66,42 @@ const Papa = require('papaparse');
 
   //
 
-  for await (const doc of salesStream) {
-    //
+  //   for await (const doc of salesStream) {
+  //     //
 
-    salesCounter++;
+  //     salesCounter++;
 
-    // Log progress
-    console.log(`> Found matching <sales> transaction | counter: ${salesCounter} | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | apex_version: ${doc.transaction.apexVersion}`);
+  //     // Log progress
+  //     console.log(`> Found matching <sales> transaction | counter: ${salesCounter} | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | apex_version: ${doc.transaction.apexVersion}`);
 
-    // Parse the data
-    let csvData = Papa.unparse(
-      [
-        {
-          _id: doc._id,
-          type: 'sales',
-          transactionId: doc.transaction?.transactionId || 'N/A',
-          transactionDate: doc.transaction?.transactionDate || 'N/A',
-          samSerialNumber: doc.transaction.macDataFields?.samSerialNumber || 'N/A',
-          aseCounterValue: doc.transaction.macDataFields?.aseCounterValue || 'N/A',
-          stopLongID: doc.transaction.stopLongID || 'N/A',
-        },
-      ],
-      {
-        skipEmptyLines: 'greedy',
-        newline: newLineCharacter,
-        header: isFirstDoc,
-      }
-    );
+  //     // Parse the data
+  //     let csvData = Papa.unparse(
+  //       [
+  //         {
+  //           _id: doc._id,
+  //           type: 'sales',
+  //           transactionId: doc.transaction?.transactionId || 'N/A',
+  //           transactionDate: doc.transaction?.transactionDate || 'N/A',
+  //           samSerialNumber: doc.transaction.macDataFields?.samSerialNumber || 'N/A',
+  //           aseCounterValue: doc.transaction.macDataFields?.aseCounterValue || 'N/A',
+  //           stopLongID: doc.transaction.stopLongID || 'N/A',
+  //         },
+  //       ],
+  //       {
+  //         skipEmptyLines: 'greedy',
+  //         newline: newLineCharacter,
+  //         header: isFirstDoc,
+  //       }
+  //     );
 
-    //
+  //     //
 
-    fs.appendFileSync(`sequencialidade.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
+  //     fs.appendFileSync(`sequencialidade.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
 
-    if (isFirstDoc) isFirstDoc = false;
+  //     if (isFirstDoc) isFirstDoc = false;
 
-    //
-  }
+  //     //
+  //   }
 
   //
 
@@ -135,7 +135,7 @@ const Papa = require('papaparse');
 
     //
 
-    fs.appendFileSync(`sequencialidade.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
+    fs.appendFileSync(`dump_tx_${startDate}_${endDate}.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
 
     if (isFirstDoc) isFirstDoc = false;
 
@@ -144,42 +144,42 @@ const Papa = require('papaparse');
 
   //
 
-  for await (const doc of locationsStream) {
-    //
+  //   for await (const doc of locationsStream) {
+  //     //
 
-    locationsCounter++;
+  //     locationsCounter++;
 
-    // Log progress
-    console.log(`> Found matching <locations> transaction | counter: ${locationsCounter} | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | apex_version: ${doc.transaction.apexVersion}`);
+  //     // Log progress
+  //     console.log(`> Found matching <locations> transaction | counter: ${locationsCounter} | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | apex_version: ${doc.transaction.apexVersion}`);
 
-    // Parse the data
-    let csvData = Papa.unparse(
-      [
-        {
-          _id: doc._id,
-          type: 'locations',
-          transactionId: doc.transaction?.transactionId || 'N/A',
-          transactionDate: doc.transaction?.transactionDate || 'N/A',
-          samSerialNumber: doc.transaction.macDataFields?.samSerialNumber || 'N/A',
-          aseCounterValue: doc.transaction.macDataFields?.aseCounterValue || 'N/A',
-          stopLongID: doc.transaction.stopLongID || 'N/A',
-        },
-      ],
-      {
-        skipEmptyLines: 'greedy',
-        newline: newLineCharacter,
-        header: isFirstDoc,
-      }
-    );
+  //     // Parse the data
+  //     let csvData = Papa.unparse(
+  //       [
+  //         {
+  //           _id: doc._id,
+  //           type: 'locations',
+  //           transactionId: doc.transaction?.transactionId || 'N/A',
+  //           transactionDate: doc.transaction?.transactionDate || 'N/A',
+  //           samSerialNumber: doc.transaction.macDataFields?.samSerialNumber || 'N/A',
+  //           aseCounterValue: doc.transaction.macDataFields?.aseCounterValue || 'N/A',
+  //           stopLongID: doc.transaction.stopLongID || 'N/A',
+  //         },
+  //       ],
+  //       {
+  //         skipEmptyLines: 'greedy',
+  //         newline: newLineCharacter,
+  //         header: isFirstDoc,
+  //       }
+  //     );
 
-    //
+  //     //
 
-    fs.appendFileSync(`sequencialidade.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
+  //     fs.appendFileSync(`sequencialidade.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
 
-    if (isFirstDoc) isFirstDoc = false;
+  //     if (isFirstDoc) isFirstDoc = false;
 
-    //
-  }
+  //     //
+  //   }
 
   //
 })();

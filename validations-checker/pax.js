@@ -17,34 +17,35 @@ const Papa = require('papaparse');
 
   await REALTIMEDB.connect();
 
+  console.log('searching...');
+
   /* * */
 
   const newLineCharacter = '\n';
 
   /* * */
 
-  const operatorId = '42';
-  const samSerialNumber = '2932060902';
-  const startDate = '2024-01-01T04:00:00';
-  const endDate = '2024-01-13T03:59:59';
+  const operatorIds = ['41', '42', '43', '44'];
+  const startDate = '2024-01-02T04:00:00';
+  const endDate = '2024-01-03T03:59:59';
+
+  const allowedApexValidationStatuses = [0, 4, 5, 6];
 
   /* * */
 
-  const salesBetweenDates = {
-    'transaction.operatorLongID': operatorId,
+  const totalValidTransactions = {
+    'transaction.operatorLongID': { $in: operatorIds },
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
-    'transaction.macDataFields.samSerialNumber': samSerialNumber,
+    'transaction.validationStatus': { $in: allowedApexValidationStatuses },
   };
 
-  
-
   /* * */
 
-  const salesStream = REALTIMEDB.SalesEntity.find(salesBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  const resultStream = REALTIMEDB.ValidationEntity.find(totalValidTransactions, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
 
   //
 
-  let salesCounter = 0;
+  let resultCounter = 0;
 
   //
 
@@ -52,20 +53,19 @@ const Papa = require('papaparse');
 
   //
 
-  for await (const doc of salesStream) {
+  for await (const doc of resultStream) {
     //
 
-    salesCounter++;
+    resultCounter++;
 
     // Log progress
-    console.log(`> Found matching <sales> transaction | counter: ${salesCounter} | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | apex_version: ${doc.transaction.apexVersion}`);
+    console.log(`> Found matching transaction | counter: ${resultCounter} | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | apex_version: ${doc.transaction.apexVersion}`);
 
     // Parse the data
     let csvData = Papa.unparse(
       [
         {
           _id: doc._id,
-          type: 'sales',
           transactionId: doc.transaction?.transactionId || 'N/A',
           transactionDate: doc.transaction?.transactionDate || 'N/A',
           samSerialNumber: doc.transaction.macDataFields?.samSerialNumber || 'N/A',
@@ -82,7 +82,7 @@ const Papa = require('papaparse');
 
     //
 
-    fs.appendFileSync(`sequencialidade.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
+    fs.appendFileSync(`pax_${startDate}_${endDate}.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
 
     if (isFirstDoc) isFirstDoc = false;
 
