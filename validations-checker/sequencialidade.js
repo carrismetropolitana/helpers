@@ -50,9 +50,9 @@ const Papa = require('papaparse');
 
   /* * */
 
-  //   const salesStream = REALTIMEDB.SalesEntity.find(salesBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  const salesStream = REALTIMEDB.SalesEntity.find(salesBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
   const validationsStream = REALTIMEDB.ValidationEntity.find(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
-  //   const locationsStream = REALTIMEDB.LocationEntity.find(locationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  const locationsStream = REALTIMEDB.LocationEntity.find(locationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
 
   //
 
