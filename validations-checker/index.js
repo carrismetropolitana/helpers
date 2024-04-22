@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 require('dotenv').config();
-const REALTIMEDB = require('./REALTIMEDB');
+const PCGIDB = require('./PCGIDB');
 const Papa = require('papaparse');
 /* * */
 
@@ -17,7 +17,7 @@ const Papa = require('papaparse');
 
   /* * * * * * * * * * * * */
 
-  await REALTIMEDB.connect();
+  await PCGIDB.connect();
 
   /* * */
 
@@ -57,7 +57,7 @@ const Papa = require('papaparse');
   let isFirstDoc = true;
   let counter = 0;
 
-  const resultStream = REALTIMEDB.ValidationEntity.find(apex311, { allowDiskUse: true, maxTimeMS: 180000 }).stream(); // .pipe(jsonToCsv()).pipe(fs.createWriteStream('./data.csv'));
+  const resultStream = PCGIDB.ValidationEntity.find(apex311, { allowDiskUse: true, maxTimeMS: 180000 }).stream(); // .pipe(jsonToCsv()).pipe(fs.createWriteStream('./data.csv'));
 
   resultStream.on('error', function (err) {
     console.error(err);
@@ -133,7 +133,7 @@ const Papa = require('papaparse');
   });
 
   resultStream.on('end', function () {
-    REALTIMEDB.client.close();
+    PCGIDB.client.close();
     console.log('closing connection');
   });
 

@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 require('dotenv').config();
-const REALTIMEDB = require('./REALTIMEDB');
+const PCGIDB = require('./PCGIDB');
 const Papa = require('papaparse');
 
 /* * */
@@ -15,7 +15,7 @@ const Papa = require('papaparse');
 
   /* * * * * * * * * * * * */
 
-  await REALTIMEDB.connect();
+  await PCGIDB.connect();
 
   /* * */
 
@@ -50,9 +50,9 @@ const Papa = require('papaparse');
 
   /* * */
 
-  const salesStream = REALTIMEDB.SalesEntity.find(salesBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
-  const validationsStream = REALTIMEDB.ValidationEntity.find(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
-  const locationsStream = REALTIMEDB.LocationEntity.find(locationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  const salesStream = PCGIDB.SalesEntity.find(salesBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  const validationsStream = PCGIDB.ValidationEntity.find(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  const locationsStream = PCGIDB.LocationEntity.find(locationsBetweenDates, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
 
   //
 

@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 require('dotenv').config();
-const REALTIMEDB = require('./REALTIMEDB');
+const PCGIDB = require('./PCGIDB');
 const Papa = require('papaparse');
 
 /* * */
@@ -15,7 +15,7 @@ const Papa = require('papaparse');
 
   /* * * * * * * * * * * * */
 
-  await REALTIMEDB.connect();
+  await PCGIDB.connect();
 
   /* * */
 
@@ -24,9 +24,9 @@ const Papa = require('papaparse');
   /* * */
 
   const operatorIds = ['42'];
-  const lineIds = ['2734'];
-  const startDate = '2024-01-01T04:00:00';
-  const endDate = '2024-04-10T03:59:59';
+  const lineIds = ['2038'];
+  const startDate = '2024-04-03T04:00:00';
+  const endDate = '2024-04-25T03:59:59';
   const allowedApexValidationStatuses = [0, 4, 5, 6];
 
   /* * */
@@ -41,7 +41,7 @@ const Papa = require('papaparse');
 
   /* * */
 
-  const validationsStream = REALTIMEDB.ValidationEntity.find(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 999000 }).stream();
+  const validationsStream = await PCGIDB.ValidationEntity.find(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 999000 }).stream();
 
   //
 
@@ -87,6 +87,8 @@ const Papa = require('papaparse');
 
     //
   }
+
+  console.log('DONE');
 
   //
 })();

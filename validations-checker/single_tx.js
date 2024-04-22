@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 require('dotenv').config();
-const REALTIMEDB = require('./REALTIMEDB');
+const PCGIDB = require('./PCGIDB');
 const allTxIds = require('./txIds.json');
 
 /* * */
@@ -15,7 +15,7 @@ const allTxIds = require('./txIds.json');
 
   /* * * * * * * * * * * * */
 
-  await REALTIMEDB.connect();
+  await PCGIDB.connect();
 
   /* * */
 
@@ -24,11 +24,11 @@ const allTxIds = require('./txIds.json');
   /* * */
 
   for (const [index, txId] of allTxIds.entries()) {
-    const resultSales = await REALTIMEDB.SalesEntity.find({ 'transaction.transactionId': txId }, '_id', { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
-    const resultValidation = await REALTIMEDB.ValidationEntity.find({ 'transaction.transactionId': txId }, '_id', { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
-    const resultLocation = await REALTIMEDB.LocationEntity.find({ 'transaction.transactionId': txId }, '_id', { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
+    const resultSales = await PCGIDB.SalesEntity.find({ 'transaction.transactionId': txId }, '_id', { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
+    const resultValidation = await PCGIDB.ValidationEntity.find({ 'transaction.transactionId': txId }, '_id', { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
+    const resultLocation = await PCGIDB.LocationEntity.find({ 'transaction.transactionId': txId }, '_id', { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
 
-    const resultFile = await REALTIMEDB.TransactionEntity.find({ transactionId: txId }, '_id', { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
+    const resultFile = await PCGIDB.TransactionEntity.find({ transactionId: txId }, '_id', { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
 
     if (resultSales.length || resultValidation.length || resultLocation.length) console.log(`counter: ${index} | tx_id: ${txId} | type: ${resultSales.length && 'sales'} ${resultValidation.length && 'validations'} ${resultLocation.length && 'location'}`);
     else if (resultFile.length) console.log(`counter: ${index} | tx_id: ${txId} | type: tx found with errors`);

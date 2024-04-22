@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 require('dotenv').config();
-const REALTIMEDB = require('./REALTIMEDB');
+const PCGIDB = require('./PCGIDB');
 const Papa = require('papaparse');
 
 /* * */
@@ -15,7 +15,7 @@ const Papa = require('papaparse');
 
   /* * * * * * * * * * * * */
 
-  await REALTIMEDB.connect();
+  await PCGIDB.connect();
 
   console.log('searching...');
 
@@ -41,7 +41,7 @@ const Papa = require('papaparse');
 
   /* * */
 
-  const resultStream = REALTIMEDB.ValidationEntity.find(totalValidTransactions, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
+  const resultStream = PCGIDB.ValidationEntity.find(totalValidTransactions, { allowDiskUse: true, maxTimeMS: 180000 }).stream();
 
   //
 

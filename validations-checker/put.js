@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 require('dotenv').config();
-const REALTIMEDB = require('./REALTIMEDB');
+const PCGIDB = require('./PCGIDB');
 const Papa = require('papaparse');
 
 /* * */
@@ -15,7 +15,7 @@ const Papa = require('papaparse');
 
   /* * * * * * * * * * * * */
 
-  await REALTIMEDB.connect();
+  await PCGIDB.connect();
 
   console.log('searching...');
 
@@ -38,7 +38,7 @@ const Papa = require('papaparse');
 
   /* * */
 
-  const resultPax = await REALTIMEDB.ValidationEntity.aggregate(
+  const resultPax = await PCGIDB.ValidationEntity.aggregate(
     [
       {
         $match: totalValidTransactions,
@@ -58,7 +58,7 @@ const Papa = require('papaparse');
 
   console.log('Total PAX', resultPax.length && resultPax[0]?.totalUnique);
 
-  const resultPut = await REALTIMEDB.ValidationEntity.aggregate(
+  const resultPut = await PCGIDB.ValidationEntity.aggregate(
     [
       {
         $match: totalValidTransactions,
@@ -80,7 +80,7 @@ const Papa = require('papaparse');
 
   console.log('Total PUT/PAX', resultPut[0].totalUnique / resultPax[0].totalUnique);
 
-  await REALTIMEDB.client.close();
+  await PCGIDB.client.close();
 
   //
 })();

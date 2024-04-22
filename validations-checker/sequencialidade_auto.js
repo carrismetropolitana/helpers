@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 require('dotenv').config();
-const REALTIMEDB = require('./REALTIMEDB');
+const PCGIDB = require('./PCGIDB');
 const Papa = require('papaparse');
 
 /* * */
@@ -15,7 +15,7 @@ const Papa = require('papaparse');
 
   /* * * * * * * * * * * * */
 
-  await REALTIMEDB.connect();
+  await PCGIDB.connect();
 
   /* * */
 
@@ -26,7 +26,7 @@ const Papa = require('papaparse');
 
   console.log('Start search...');
 
-  const result = await REALTIMEDB.ValidationEntity.aggregate(
+  const result = await PCGIDB.ValidationEntity.aggregate(
     [
       // Match documents within the specified day
       {
