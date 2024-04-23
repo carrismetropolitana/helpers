@@ -24,7 +24,7 @@ const Papa = require('papaparse');
   /* * */
 
   const operatorIds = ['42'];
-  const lineIds = ['2038'];
+  const lineIds = ['2039'];
   const startDate = '2024-04-03T04:00:00';
   const endDate = '2024-04-25T03:59:59';
   const allowedApexValidationStatuses = [0, 4, 5, 6];
