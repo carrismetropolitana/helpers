@@ -29,7 +29,7 @@ const Papa = require('papaparse');
   //
   // 2. Prepare variables
 
-  let allStopsWithoutService = [];
+  // let allStopsWithoutService = [];
   let allStopsWithLines = [];
   let allStopsWithRoutes = [];
   let allStopsWithPatterns = [];
@@ -40,28 +40,27 @@ const Papa = require('papaparse');
   for (const stopData of allStopsData) {
     //
 
-    if (!stopData.lines?.length) {
-      allStopsWithoutService.push({ stop_id: stopData.id, stop_name: stopData.name });
-      continue;
-    }
+    // if (!stopData.lines?.length) {
+    //   allStopsWithoutService.push({ stop_id: stopData.id, stop_name: stopData.name });
+    //   continue;
+    // }
 
-    continue;
+    // continue;
 
-    let areas = '';
+    const areas = new Set();
 
     for (const lineId of stopData.lines) {
-      areas += lineId.substring(0, 1);
+      areas.add(lineId.substring(0, 1));
     }
 
-    // if (areas.includes('1')) {
     allStopsWithLines.push({
       stop_id: stopData.id,
       stop_name: stopData.name,
       stop_lat: stopData.lat,
       stop_lon: stopData.lon,
       lines: stopData.lines?.join('|'),
+      areas: Array.from(areas).join('|'),
     });
-    // }
 
     // allStopsWithRoutes.push({
     //   stop_id: stopData.id,
@@ -85,16 +84,16 @@ const Papa = require('papaparse');
   //
   // 4. Create the CSV tables
 
-  const allStopsWithoutServiceCsv = Papa.unparse(allStopsWithoutService);
-  //   const allStopsWithLinesCsv = Papa.unparse(allStopsWithLines);
+  // const allStopsWithoutServiceCsv = Papa.unparse(allStopsWithoutService);
+  const allStopsWithLinesCsv = Papa.unparse(allStopsWithLines);
   //   const allStopsWithRoutesCsv = Papa.unparse(allStopsWithRoutes);
   //   const allStopsWithPatternsCsv = Papa.unparse(allStopsWithPatterns);
 
   //
   // 4. Save the CSV data to the disk
 
-  fs.writeFileSync('stops-without-service.csv', allStopsWithoutServiceCsv);
-  //   fs.writeFileSync('stops-lines.csv', allStopsWithLinesCsv);
+  // fs.writeFileSync('stops-without-service.csv', allStopsWithoutServiceCsv);
+  fs.writeFileSync('stops-lines.csv', allStopsWithLinesCsv);
   //   fs.writeFileSync('stops-routes.csv', allStopsWithRoutesCsv);
   //   fs.writeFileSync('stops-patterns.csv', allStopsWithPatternsCsv);
 

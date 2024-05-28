@@ -3,6 +3,7 @@
 const fs = require('fs');
 require('dotenv').config();
 const PCGIDB = require('./PCGIDB');
+const { DateTime } = require('luxon');
 
 /* * */
 
@@ -18,16 +19,19 @@ const PCGIDB = require('./PCGIDB');
 
   /* * */
 
-  const startDateMillis = 1713524400000;
-  const endDateMillis = 1713538800000;
+  const startDateMillis = DateTime.fromFormat('2024-04-19', 'yyyy-MM-dd').set({hour: 4, minute: 0, second: 0}).toMillis();
+  const endDateMillis = DateTime.fromFormat('2024-04-20', 'yyyy-MM-dd').set({hour: 3, minute: 59, second: 59}).toMillis();
+
+  // const startDateMillis = startDate.toMillis();
+  // const endDateMillis = endDate.toMillis();
 
   /* * */
 
   const query = {
     millis: { $gte: startDateMillis, $lte: endDateMillis },
     'content.entity.vehicle.agencyId': '43',
-    'content.entity.vehicle.vehicle._id': '2239',
-    // 'content.entity.vehicle.trip.tripId': '3507_0_1_1330_1359_0_ESC_DU',
+    // 'content.entity.vehicle.vehicle._id': '2239',
+    'content.entity.vehicle.trip.tripId': '3011_0_1_1830_1859_0_ESC_DU',
   };
 
   /* * */
@@ -42,6 +46,11 @@ const PCGIDB = require('./PCGIDB');
   const resultString = JSON.stringify(result, null, 2);
 
   fs.writeFileSync(`events-43-${startDateMillis}-${endDateMillis}.json`, resultString);
+
+  console.log('Events found: ' + result.length);
+  console.log('Done!');
+
+  process.exit(0);
 
   //
 })();

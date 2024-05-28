@@ -24,19 +24,19 @@ const Papa = require('papaparse');
   /* * */
 
   const operatorIds = ['42'];
-  const lineIds = ['2039'];
-  const startDate = '2024-04-03T04:00:00';
-  const endDate = '2024-04-25T03:59:59';
-  const allowedApexValidationStatuses = [0, 4, 5, 6];
+  const lineIds = ['2740', '2746', '2765', '2776', '2803', '2804', '2807', '2768', '2724', '2801', '2841', '2717', '2716', '2802', '2745', '2718', '2830'];
+  const startDate = '2024-05-20T04:00:00';
+  const endDate = '2024-05-25T03:59:59';
+  const allowedApexValidationStatuses = [0];
 
   /* * */
 
   const validationsBetweenDates = {
     'transaction.operatorLongID': { $in: operatorIds },
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
-    'transaction.transactionDate': { $gte: startDate, $lte: endDate },
     'transaction.validationStatus': { $in: allowedApexValidationStatuses },
     'transaction.lineLongID': { $in: lineIds },
+    // 'transaction.journeyLongID': '1221_0_2_1430_1459_0_1',
   };
 
   /* * */
@@ -68,8 +68,14 @@ const Papa = require('papaparse');
           _id: doc._id,
           type: 'validations',
           transactionId: doc.transaction?.transactionId || 'N/A',
+          transactionId: doc.transaction?.transactionId || 'N/A',
           transactionDate: doc.transaction?.transactionDate || 'N/A',
           productLongID: doc.transaction.productLongID || 'N/A',
+          operatorLongID: doc.transaction.operatorLongID || 'N/A',
+          lineLongID: doc.transaction.lineLongID || 'N/A',
+          patternLongID: doc.transaction.patternLongID || 'N/A',
+          journeyID: doc.transaction.journeyID || 'N/A',
+          stopLongID: doc.transaction.stopLongID || 'N/A',
         },
       ],
       {
@@ -81,7 +87,7 @@ const Papa = require('papaparse');
 
     //
 
-    fs.appendFileSync(`dump_tx_${startDate}_${endDate}.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
+    fs.appendFileSync(`dump_tx_${lineIds.join('-')}.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
 
     if (isFirstDoc) isFirstDoc = false;
 
