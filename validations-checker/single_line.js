@@ -23,10 +23,11 @@ const Papa = require('papaparse');
 
   /* * */
 
-  const operatorIds = ['42'];
-  const lineIds = ['2740', '2746', '2765', '2776', '2803', '2804', '2807', '2768', '2724', '2801', '2841', '2717', '2716', '2802', '2745', '2718', '2830'];
-  const startDate = '2024-05-20T04:00:00';
-  const endDate = '2024-05-25T03:59:59';
+  const operatorIds = ['43'];
+  const lineIds = ['3536'];
+  const stopIds = ['140307', '149990', '140213'];
+  const startDate = '2024-01-01T04:00:00';
+  const endDate = '2024-06-01T03:59:59';
   const allowedApexValidationStatuses = [0];
 
   /* * */
@@ -37,6 +38,7 @@ const Papa = require('papaparse');
     'transaction.validationStatus': { $in: allowedApexValidationStatuses },
     'transaction.lineLongID': { $in: lineIds },
     // 'transaction.journeyLongID': '1221_0_2_1430_1459_0_1',
+    'transaction.stopLongID': { $in: stopIds },
   };
 
   /* * */
