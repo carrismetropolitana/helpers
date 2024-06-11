@@ -12,7 +12,7 @@ const start = async () => {
   //
   // 0. Get latest data from Intermodal
 
-  const txtData = fs.readFileSync('3_0_1.geojson', { encoding: 'utf8' });
+  const txtData = fs.readFileSync('Metro-Amarela-Odivelas-Rato.geojson', { encoding: 'utf8' });
   const geojsonData = JSON.parse(txtData);
 
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
@@ -24,7 +24,7 @@ const start = async () => {
   for (const feature of sortedGeojsonData) {
     //
 
-    const patternId = '3_0_1';
+    const patternId = 'Metro-Amarela-Odivelas-Rato';
 
     //
 
@@ -33,16 +33,16 @@ const start = async () => {
     // Setup the first point for the shape
     allShapesData.push({
       shape_id: `shp_${patternId}`,
-      shape_pt_lat: feature.geometry?.coordinates[0][1].toFixed(6),
-      shape_pt_lon: feature.geometry?.coordinates[0][0].toFixed(6),
+      shape_pt_lat: feature.geometry?.coordinates[0][0][1].toFixed(6),
+      shape_pt_lon: feature.geometry?.coordinates[0][0][0].toFixed(6),
       shape_pt_sequence: 0,
       shape_dist_traveled: 0,
     });
 
-    for (let index = 1; index < feature.geometry?.coordinates.length; index++) {
+    for (let index = 1; index < feature.geometry?.coordinates[0].length; index++) {
       // Calculate distance for this segment
-      const pointA = turf.point(feature.geometry?.coordinates[index - 1]);
-      const pointB = turf.point(feature.geometry?.coordinates[index]);
+      const pointA = turf.point(feature.geometry?.coordinates[0][index - 1]);
+      const pointB = turf.point(feature.geometry?.coordinates[0][index]);
       const segmentDistance = turf.distance(pointA, pointB, { units: 'kilometers' }) * 1000;
       // Add the distance to cumulative
       cumulativeDistance += segmentDistance;
