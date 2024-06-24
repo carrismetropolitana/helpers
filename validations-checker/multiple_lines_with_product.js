@@ -23,11 +23,42 @@ const Papa = require('papaparse');
 
   /* * */
 
-//   const operatorIds = ['42'];
+  const operatorIds = ['43'];
   const lineIds = ['2150', '2131', '2111', '2129', '2130', '2137', '2119', '2114', '2139', '2138', '2115', '2102', '2140', '2101', '2152'];
-  const stopIds = ['140307', '149990', '140213'];
-  const startDate = '2024-05-01T04:00:00';
-  const endDate = '2024-06-01T03:59:59';
+  const stopIds = [
+	'020123',
+	'020124',
+	'020125',
+	'020127',
+	'020128',
+	'020129',
+	'020130',
+	'020131',
+	'020132',
+	'020137',
+	'020139',
+	'020141',
+	'020142',
+	'020195',
+	'020197',
+	'020585',
+	'020586',
+	'020587',
+	'020588',
+	'020589',
+	'020590',
+	'020603',
+	'020605',
+	'020606',
+	'020611',
+	'020612',
+	'020613',
+	'020668',
+	'020669',
+	'020701',
+  ];
+  const startDate = '2024-01-01T04:00:00';
+  const endDate = '2024-06-24T03:59:59';
   const allowedApexValidationStatuses = [0];
 
   /* * */
@@ -36,9 +67,9 @@ const Papa = require('papaparse');
    //  'transaction.operatorLongID': { $in: operatorIds },
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
     'transaction.validationStatus': { $in: allowedApexValidationStatuses },
-    'transaction.lineLongID': { $in: lineIds },
+   //  'transaction.lineLongID': { $in: lineIds },
     // 'transaction.journeyLongID': '1221_0_2_1430_1459_0_1',
-   //  'transaction.stopLongID': { $in: stopIds },
+    'transaction.stopLongID': { $in: stopIds },
   };
 
   /* * */
@@ -89,7 +120,7 @@ const Papa = require('papaparse');
 
     //
 
-    fs.appendFileSync(`dump_tx_${lineIds.join('-')}.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
+    fs.appendFileSync(`dump_tx_${stopIds.join('-')}.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
 
     if (isFirstDoc) isFirstDoc = false;
 
