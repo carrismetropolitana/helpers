@@ -30,15 +30,13 @@ const formatStops = async () => {
   for (const stop of rawData) {
     //
 
-    console.log(stop)
-
     // Check if this stop is for Carris Metropolitana
     const stopOperator = stop.operators.find((item) => item.operator_id === 1);
     if (!stopOperator) continue;
 
     if (stop.parking_local_access_impairment){console.log(stop)}
 
-    if (stopOperator.stop_ref.substring(0, 2) !== '06') continue;
+    if (stopOperator.stop_ref.substring(0, 2) !== '11') continue;
 
     // Create file
     result.push({
