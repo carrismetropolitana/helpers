@@ -36,7 +36,7 @@ const formatStops = async () => {
 
     if (stop.parking_local_access_impairment){console.log(stop)}
 
-    if (stopOperator.stop_ref.substring(0, 2) !== '11') continue;
+    if (stopOperator.stop_ref.substring(0, 2) !== '17') continue;
 
     // Create file
     result.push({
