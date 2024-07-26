@@ -23,9 +23,10 @@ const Papa = require('papaparse');
 
   /* * */
 
-  const operatorIds = ['43'];
-  const lineIds = ['3536'];
+  const operatorIds = ['42'];
+  const lineIds = ['2708'];
   const stopIds = ['140307', '149990', '140213'];
+  const tripIds = ['2708_0_1|1|3|0740'];
   const startDate = '2024-01-01T04:00:00';
   const endDate = '2024-06-01T03:59:59';
   const allowedApexValidationStatuses = [0];
@@ -37,8 +38,8 @@ const Papa = require('papaparse');
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
     'transaction.validationStatus': { $in: allowedApexValidationStatuses },
     'transaction.lineLongID': { $in: lineIds },
-    // 'transaction.journeyLongID': '1221_0_2_1430_1459_0_1',
-    'transaction.stopLongID': { $in: stopIds },
+   //  'transaction.journeyLongID': { $in: tripIds },
+   //  'transaction.stopLongID': { $in: stopIds },
   };
 
   /* * */
@@ -89,7 +90,7 @@ const Papa = require('papaparse');
 
     //
 
-    fs.appendFileSync(`dump_tx_${lineIds.join('-')}.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
+    fs.appendFileSync(`dump_tx.csv`, isFirstDoc ? csvData : newLineCharacter + csvData);
 
     if (isFirstDoc) isFirstDoc = false;
 
