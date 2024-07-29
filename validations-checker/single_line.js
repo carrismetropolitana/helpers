@@ -44,7 +44,11 @@ const Papa = require('papaparse');
 
   /* * */
 
-  const validationsStream = await PCGIDB.ValidationEntity.find(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 999000 }).stream();
+  const validationsStream = await PCGIDB.ValidationEntity.find({
+	'transaction.operatorLongID': { '$in': [ '41', '42', '43', '44' ] },
+	'transaction.transactionDate': { '$gte': '2024-07-11T04:00:00', '$lte': '2024-07-26T11:37:56' },
+	'transaction.validationStatus': { '$in': [ 0 ] }
+}, { allowDiskUse: true, maxTimeMS: 999000 }).stream();
 
   //
 
