@@ -19,19 +19,19 @@ const { DateTime } = require('luxon');
 
   /* * */
 
-  const startDateMillis = DateTime.fromFormat('2024-07-25', 'yyyy-MM-dd').set({hour: 4, minute: 0, second: 0}).toMillis();
-  const endDateMillis = DateTime.fromFormat('2024-07-26', 'yyyy-MM-dd').set({hour: 3, minute: 59, second: 59}).toMillis();
+  const startDateMillis = DateTime.fromFormat('2024-07-26', 'yyyy-MM-dd').set({hour: 4, minute: 0, second: 0}).toMillis();
+  const endDateMillis = DateTime.fromFormat('2024-07-27', 'yyyy-MM-dd').set({hour: 3, minute: 59, second: 59}).toMillis();
 
-  // const startDateMillis = startDate.toMillis();
-  // const endDateMillis = endDate.toMillis();
+  const agencyId = "41";
+  const tripId = "1710_0_2_0430_0459_0_7";
 
   /* * */
 
   const query = {
     millis: { $gte: startDateMillis, $lte: endDateMillis },
-    'content.entity.vehicle.agencyId': '42',
+    'content.entity.vehicle.agencyId': agencyId,
     // 'content.entity.vehicle.vehicle._id': '2239',
-    'content.entity.vehicle.trip.tripId': '2774_1_2|1|3|0915',
+    'content.entity.vehicle.trip.tripId': tripId,
   };
 
   /* * */
@@ -41,11 +41,7 @@ const { DateTime } = require('luxon');
 
   const result = await PCGIDB.VehicleEvents.find(query, { allowDiskUse: true, maxTimeMS: 180000 }).toArray();
 
-  console.log(result);
-
-  const resultString = JSON.stringify(result, null, 2);
-
-  fs.writeFileSync(`events-42-${startDateMillis}-${endDateMillis}.json`, resultString);
+  fs.writeFileSync(`events-${agencyId}-${tripId}-${startDateMillis}-${endDateMillis}.json`, JSON.stringify(result, null, 2));
 
   console.log('Events found: ' + result.length);
   console.log('Done!');
