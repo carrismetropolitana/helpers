@@ -16,7 +16,7 @@ const Papa = require('papaparse');
   // 1. Setup variables
 
   //
-  // 2. Import all GTFS files
+  // 2. Import all GTFS files wwwwwwwwwwwwwwww
 
   const stopsTxt = Papa.parse(fs.readFileSync('./gtfs/stops.txt', { encoding: 'utf-8' }), { header: true }).data;
   const tripsTxt = Papa.parse(fs.readFileSync('./gtfs/trips.txt', { encoding: 'utf-8' }), { header: true }).data;
