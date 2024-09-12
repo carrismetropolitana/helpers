@@ -52,7 +52,7 @@ const formatStops = async () => {
   //
   // 2. Save the formatted data into a JSON file
 
-  console.log('• Saving data to JSON file.');
+  console.log('• Keeping files data to JSON file.');
 
   const jsonFilename = 'intermodal-result.json';
   const jsonData = JSON.stringify(result);
