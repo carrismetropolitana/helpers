@@ -110,7 +110,7 @@ const turf = require('@turf/turf');
 
   console.log('• Saving service analysis result to CSV file...');
   const serviceAnalysisCsv = Papa.unparse(serviceAnalysisResult, { skipEmptyLines: 'greedy' });
-  fs.writeFileSync(`service_analysis_result.csv`, serviceAnalysisCsv);
+  fs.writeFileSync(`service_analysis_result_.csv`, serviceAnalysisCsv);
   console.log('• Done! Updated ' + serviceAnalysisResult.length + ' postal codes.');
 
   //
