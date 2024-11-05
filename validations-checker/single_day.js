@@ -24,19 +24,24 @@ const Papa = require('papaparse');
   /* * */
 
   const operatorIds = ['44'];
-  const startDate = '2023-03-30T04:00:00';
+  const startDate = '2023-01-01T04:00:00';
   const endDate = '2023-03-31T03:59:59';
   const allowedApexValidationStatuses = [0];
 
   /* * */
 
   const validationsBetweenDates = {
-    'transaction.operatorLongID': { '$in': operatorIds },
+   //  'transaction.operatorLongID': { '$in': operatorIds },
     'transaction.transactionDate': { $gte: startDate, $lte: endDate },
-    'transaction.validationStatus': { $in: allowedApexValidationStatuses },
+   //  'transaction.validationStatus': { $in: allowedApexValidationStatuses },
   };
 
   /* * */
+
+  const validationsCount = await PCGIDB.ValidationEntity.countDocuments(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 999000 });
+
+  console.log(validationsCount);
+  return;
 
   const validationsStream = await PCGIDB.ValidationEntity.find(validationsBetweenDates, { allowDiskUse: true, maxTimeMS: 999000 }).stream();
 

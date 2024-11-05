@@ -19,11 +19,23 @@ const { DateTime } = require('luxon');
 
   /* * */
 
-  const startDateMillis = DateTime.fromFormat('2024-07-26', 'yyyy-MM-dd').set({hour: 4, minute: 0, second: 0}).toMillis();
-  const endDateMillis = DateTime.fromFormat('2024-07-27', 'yyyy-MM-dd').set({hour: 3, minute: 59, second: 59}).toMillis();
+  const startDateMillis = DateTime.fromFormat('2024-09-19', 'yyyy-MM-dd').set({hour: 4, minute: 0, second: 0}).toMillis();
+  const endDateMillis = DateTime.fromFormat('2024-09-20', 'yyyy-MM-dd').set({hour: 3, minute: 59, second: 59}).toMillis();
 
   const agencyId = "41";
-  const tripId = "1710_0_2_0430_0459_0_7";
+  const tripId = "1205_0_1_0600_0629_0_1";
+
+
+//
+//
+//
+
+//
+//
+//
+//
+
+
 
   /* * */
 

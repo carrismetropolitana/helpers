@@ -24,7 +24,8 @@ const Papa = require('papaparse');
   /* * */
 
   const stopIds = [
-	'075500',
+	'070514',
+	// '070514',
   ];
   const startDate = '2024-05-01T04:00:00';
   const endDate = '2024-06-01T03:59:59';
