@@ -1,34 +1,88 @@
-/* * * * * */
-/* MAKE TTS STOP NAMES */
-/* * */
 /* * */
 
-/* * */
-/* IMPORTS */
 const fs = require('fs');
-const turf = require('@turf/turf');
+
+/* * */
 
 const formatFeatures = async () => {
   //
 
-  //
-  // 0. Get latest data from Intermodal
+  console.log('• Parsing districts...');
 
-  console.log('• Parsing features...');
+  const districtsText = fs.readFileSync('districts.json', { encoding: 'utf8' });
+  const districtsData = JSON.parse(districtsText);
 
-  const jsonData = fs.readFileSync('aml.json', { encoding: 'utf8' });
-
-  const geojsonData = JSON.parse(jsonData);
-
-  let unionResult = geojsonData.features.pop();
-  for (const feature of geojsonData.features) {
+  for (const districtFeature of districtsData.features) {
     //
-    unionResult = turf.union(unionResult, feature);
+
+	districtFeature.id = districtFeature.properties.id;
+
+	districtFeature.properties.area_ha = districtFeature.properties.Area_ha;
+	delete districtFeature.properties.Area_ha;
+
+	delete districtFeature.properties.id;
+	delete districtFeature.properties.Perim_km;
+	delete districtFeature.properties.Shape_Length;
+	delete districtFeature.properties.Shape_Area;
+	delete districtFeature.properties.OBJECTID;
+
     //
   }
 
-  // Append the csv string to the file
-  fs.writeFileSync(`unitedAml.json`, JSON.stringify(unionResult));
+  fs.writeFileSync(`districts_parsed.json`, JSON.stringify(districtsData, null, 2));
+
+
+  /* * */
+
+  console.log('• Parsing municipalities...');
+
+  const municipalitiesText = fs.readFileSync('municipalities.json', { encoding: 'utf8' });
+  const municipalitiesData = JSON.parse(municipalitiesText);
+
+  for (const municipalityFeature of municipalitiesData.features) {
+    //
+
+	municipalityFeature.id = municipalityFeature.properties.id;
+
+	municipalityFeature.properties.area_ha = municipalityFeature.properties.Area_ha;
+	delete municipalityFeature.properties.Area_ha;
+
+	delete municipalityFeature.properties.id;
+	delete municipalityFeature.properties.Perim_km;
+	delete municipalityFeature.properties.Shape_Length;
+	delete municipalityFeature.properties.Shape_Area;
+	delete municipalityFeature.properties.OBJECTID;
+
+    //
+  }
+
+  fs.writeFileSync(`municipalities_parsed.json`, JSON.stringify(municipalitiesData, null, 2));
+
+   /* * */
+
+   console.log('• Parsing parishes...');
+
+   const parishesText = fs.readFileSync('parishes.json', { encoding: 'utf8' });
+   const parishesData = JSON.parse(parishesText);
+
+   for (const parishFeature of parishesData.features) {
+	 //
+
+	 parishFeature.id = parishFeature.properties.id;
+
+	 parishFeature.properties.area_ha = parishFeature.properties.Area_ha;
+	 delete parishFeature.properties.Area_ha;
+
+	 delete parishFeature.properties.id;
+	 delete parishFeature.properties.Perim_km;
+	 delete parishFeature.properties.Shape_Length;
+	 delete parishFeature.properties.Shape_Area;
+	 delete parishFeature.properties.OBJECTID;
+
+	 //
+   }
+
+   fs.writeFileSync(`parishes_parsed.json`, JSON.stringify(parishesData, null, 2));
 
   //
 
