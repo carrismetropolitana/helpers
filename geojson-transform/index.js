@@ -44,6 +44,8 @@ const formatFeatures = async () => {
 
 	municipalityFeature.id = municipalityFeature.properties.id;
 
+	municipalityFeature.district_id = municipalityFeature.properties.id.substring(0, 2);
+
 	municipalityFeature.properties.area_ha = municipalityFeature.properties.Area_ha;
 	delete municipalityFeature.properties.Area_ha;
 
@@ -69,6 +71,9 @@ const formatFeatures = async () => {
 	 //
 
 	 parishFeature.id = parishFeature.properties.id;
+
+	 parishFeature.district_id = parishFeature.properties.id.substring(0, 2);
+	 parishFeature.municipality_id = parishFeature.properties.id.substring(0, 4);
 
 	 parishFeature.properties.area_ha = parishFeature.properties.Area_ha;
 	 delete parishFeature.properties.Area_ha;
