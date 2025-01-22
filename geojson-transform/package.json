@@ -1,8 +1,16 @@
 {
-    "name": "@carrismetropolitana/helpers-geojson-transform",
-    "version": "1.0.0",
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js"
-    }
+	"name": "@carrismetropolitana/helpers-geojson-transform",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"dependencies": {
+		"@turf/turf": "7.2.0",
+		"yazl": "3.3.1"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20250103.1610.23"
+	}
 }
