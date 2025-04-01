@@ -207,6 +207,12 @@ module.exports = [
                 images: [
                     { filename: "Tattoo_1.png", order: 6 },
                 ],
+            },
+            {
+                _id: "tattoo_0",
+                images: [
+                    { filename: "Tattoo_0.png", order: 6 },
+                ],
             }
         ]
     },
