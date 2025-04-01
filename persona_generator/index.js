@@ -1,20 +1,39 @@
 const fs = require('fs');
 const path = require('path');
-const sharp = require('sharp'); // Using Sharp instead of Jimp
+const sharp = require('sharp');
 
-const outputFile = 'ids_sample.txt';
+// Load the categories structure from the JS file
+const categories = require('./structure');
 
-const imagesBaseDir = './assets/layers';
+const mappingOutputFile = 'composites_map.json';
 const outputDir = './output';
+const imagesBaseDir = './assets/layers';
+
+
 
 // Ensure output directory exists
 if (!fs.existsSync(outputDir)) {
   console.log(`Output directory not found. Creating: ${outputDir}`);
   fs.mkdirSync(outputDir);
 } else {
-  console.log(`Output directory exists: ${outputDir}`);
-}
+  //Clear Mappping file
+  fs.unlink('./composites_map.json', (err) => {
+    if (err) throw err;
+  });
 
+  // Clear Output Directory
+  fs.readdir(outputDir,(err, files) => {
+    if (err) throw err;
+  
+    for (const file of files) {
+      fs.unlink(path.join(outputDir, file), (err) => {
+        if (err) throw err;
+      });
+    }
+  });
+
+  console.log(`Output directory exists, cleaning: ${outputDir} and mapping.json`);
+}
 
 function factorial(n) {
   if (n === 0 || n === 1) return 1;
@@ -29,114 +48,147 @@ function combinations(n, k) {
   return factorial(n) / (factorial(k) * factorial(n - k));
 }
 
-
 const N = 6 * 12; 
-const totalIds = combinations(N, 2);
+const totalPossibilities = combinations(N, 2);
 
-// Function to generate a random ID in the format 1_1_1_1_1_1_1
-function getRandomId() {
-  const parts = [];
-  for (let i = 0; i < 7; i++) {
-    const randomNumber = Math.floor(Math.random() * 12) + 1;
-    parts.push(randomNumber);
+// Randomly pick one item from each category to form a composite.
+// The composite id is built by joining the real _id from each selected item using '|'.
+function getRandomComposite() {
+  const composite = {};
+  // Randomly select one item per category
+  for (const category of categories) {
+    const items = category.items;
+    const randomIndex = Math.floor(Math.random() * items.length);
+    composite[category._id] = items[randomIndex];
   }
-  const id = parts.join('_');
-  console.log(`Generated ID: ${id}`);
-  return id;
+  
+  // Build composite id by joining selected items' _id values with '|'
+  const compositeIdString = categories
+    .map(category => composite[category._id]._id)
+    .join('|');
+  
+  console.log(`Generated composite ID: ${compositeIdString}`);
+  return { composite, compositeIdString };
 }
 
-// Function to generate IDs and write them to a file
-async function generateIds() {
-  console.log("Starting ID generation...");
-  const stream = fs.createWriteStream(outputFile, { flags: 'w' });
+const SAMPLE_COUNT = totalPossibilities;
 
-  for (let i = 0; i < totalIds; i++) {
-    const id = getRandomId();
-    console.log(`Writing ID ${i + 1}: ${id}`);
-    stream.write(id + '\n');
+async function generateCompositesMappingAndImages() {
+  console.log("Starting composite mapping generation...");
+  const compositesMapping = [];
+  const composites = [];
+  
+  for (let i = 0; i < SAMPLE_COUNT; i++) {
+    const compositeData = getRandomComposite();
+    compositesMapping.push({
+      id: compositeData.compositeIdString,
+      url: compositeData.compositeIdString + ".png"
+    });
+    composites.push(compositeData);
   }
-
-  // Use the 'finish' event to know when writing is complete
-  stream.on('finish', async () => {
-    console.log(`Sample file generation complete! ${totalIds} IDs written to ${outputFile}`);
-    console.log("Starting image processing...");
-    await processIds();
-  });
-
-  stream.end();
+  
+  fs.writeFileSync(mappingOutputFile, JSON.stringify(compositesMapping, null, 2));
+  console.log(`Composite mapping written to ${mappingOutputFile}`);
+  console.log("Starting image processing...");
+  await processComposites(composites);
 }
 
-// Function to process IDs and create composite images using Sharp
-async function processIds() {
+async function processComposites(composites) {
   try {
-    console.log(`Reading IDs from file: ${outputFile}`);
-    const data = fs.readFileSync(outputFile, 'utf8');
-    const ids = data.trim().split('\n');
-    console.log(`Found ${ids.length} ID(s) in file`);
+    console.log(`Processing ${composites.length} composite definitions`);
 
-    for (const [index, id] of ids.entries()) {
-      console.log(`Processing ID ${index + 1}: ${id}`);
-      const parts = id.split('_');
-      
+    for (const { composite, compositeIdString } of composites) {
+      console.log(`Processing composite: ${compositeIdString}`);
+
       // Create a blank 1000x1000 image with a transparent background
       let baseImage = sharp({
         create: {
           width: 1000,
           height: 1000,
           channels: 4,
-          background: { r: 0, g: 0, b: 0, alpha: 0 }
-        }
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        },
       });
 
       const compositeLayers = [];
 
-      for (const [layerIndex, imageNumber] of parts.entries()) {
-        const layer = layerIndex + 1;
-        let imagePath = path.join(imagesBaseDir, `${layer}`, `${imageNumber}.png`);
-        console.log(`Layer ${layer}: Checking image path: ${imagePath}`);
+      // For each category, process the selected item's images
+      for (const category of categories) {
+        const catId = category._id;
+        const selectedItem = composite[catId];
+        if (!selectedItem) continue;
 
-        // Check if the image exists; if not, use fallback
-        if (!fs.existsSync(imagePath)) {
-          console.warn(`Layer ${layer}: Image not found: ${imagePath}. Using fallback image.`);
-          imagePath = path.join(imagesBaseDir, `${layer}`, `1.png`);
-          if (!fs.existsSync(imagePath)) {
-            console.error(`Layer ${layer}: Fallback image not found: ${imagePath}. Skipping this layer.`);
-            continue;
+        for (const imageData of selectedItem.images) {
+          let imagePath;
+          if (catId === 'Base') {
+            // For Base, the image is a loose file in imagesBaseDir
+            imagePath = path.join(imagesBaseDir, imageData.filename);
+          } else {
+            // For other categories, the image is inside a folder named exactly as the category id
+            imagePath = path.join(imagesBaseDir, catId, imageData.filename);
           }
-        }
 
-        try {
-          console.log(`Layer ${layer}: Reading image: ${imagePath}`);
-          // Resize image to base dimensions (1000x1000) before compositing
-          console.log(`Layer ${layer}: Resizing image to 1000x1000.`);
-          const layerBuffer = await sharp(imagePath)
-            .resize(1000, 1000, { fit: 'contain' })
-            .toBuffer();
-          console.log(`Layer ${layer}: Adding image to composite layers.`);
-          compositeLayers.push({
-            input: layerBuffer,
-            top: 0,
-            left: 0
-          });
-        } catch (error) {
-          console.error(`Layer ${layer}: Error processing image ${imagePath}:`, error);
+          // If the image does not exist, attempt fallback using the first image of the item
+          if (!fs.existsSync(imagePath)) {
+            console.warn(`Image not found: ${imagePath}. Attempting fallback.`);
+            if (selectedItem.images.length > 0) {
+              const fallbackImage = selectedItem.images[0];
+              if (catId === 'Base') {
+                imagePath = path.join(imagesBaseDir, fallbackImage.filename);
+              } else {
+                imagePath = path.join(imagesBaseDir, catId, fallbackImage.filename);
+              }
+            }
+            if (!fs.existsSync(imagePath)) {
+              console.error(`Fallback image also not found for category ${catId}. Skipping.`);
+              continue;
+            }
+          }
+
+          try {
+            const layerBuffer = await sharp(imagePath)
+              .resize(1000, 1000, { fit: 'contain' })
+              .toBuffer();
+            // Add this layer to the composite layers array with its order
+            compositeLayers.push({
+              input: layerBuffer,
+              top: 0,
+              left: 0,
+              order: imageData.order,
+            });
+          } catch (error) {
+            console.error(`Error processing image ${imagePath}:`, error);
+          }
         }
       }
 
-      console.log(`Compositing layers for composite image ${index + 1}.`);
-      // Composite all layers onto the base image
-      baseImage = baseImage.composite(compositeLayers);
+      // Sort compositeLayers by the 'order' property
+      compositeLayers.sort((a, b) => a.order - b.order);
 
-      const outputFilePath = path.join(outputDir, `composite_${index + 1}.png`);
+      // Remove the 'order' property as it's not needed for the composite operation
+      const layersToComposite = compositeLayers.map(({ input, top, left }) => ({
+        input,
+        top,
+        left,
+      }));
+
+      console.log(`Compositing ${layersToComposite.length} layers for composite: ${compositeIdString}`);
+      baseImage = baseImage.composite(layersToComposite);
+
+      // Build the output file path using the composite id
+      const outputFilePath = path.join(outputDir, `${compositeIdString}.png`);
+      // Ensure the directory exists
+      fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
+
       console.log(`Writing composite image to: ${outputFilePath}`);
       await baseImage.png().toFile(outputFilePath);
       console.log(`Composite image created: ${outputFilePath}`);
     }
   } catch (err) {
-    console.error('Error reading IDs file:', err);
+    console.error('Error processing composite definitions:', err);
   }
 }
 
-// Start the process
 console.log("Script started.");
-generateIds();
+generateCompositesMappingAndImages();
+console.log("Script finished.");
