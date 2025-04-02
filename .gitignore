@@ -132,3 +132,4 @@ package-lock.json
 
 *.pbf
 *.csv
+persona_generator/composites_map.json

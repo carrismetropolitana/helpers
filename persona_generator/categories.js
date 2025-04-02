@@ -1,4 +1,4 @@
-module.exports = [
+export const categories = [
     { 
         _id: "Base",
         items: [
@@ -258,4 +258,4 @@ module.exports = [
         ]
     },
   ];
-  
+  export default categories;

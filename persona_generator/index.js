@@ -1,15 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const sharp = require('sharp');
-
-// Load the categories structure from the JS file
-const categories = require('./structure');
+import fs from 'fs';
+import path from 'path';
+import sharp from 'sharp';
+import { factorial } from './utils/factorial.js';
+import categories from './categories.js';
 
 const mappingOutputFile = 'composites_map.json';
 const outputDir = './output';
 const imagesBaseDir = './assets/layers';
-
-
 
 // Ensure output directory exists
 if (!fs.existsSync(outputDir)) {
@@ -35,15 +32,6 @@ if (!fs.existsSync(outputDir)) {
   console.log(`Output directory exists, cleaning: ${outputDir} and mapping.json`);
 }
 
-function factorial(n) {
-  if (n === 0 || n === 1) return 1;
-  let result = 1;
-  for (let i = 2; i <= n; i++) {
-      result *= i;
-  }
-  return result;
-}
-
 function combinations(n, k) {
   return factorial(n) / (factorial(k) * factorial(n - k));
 }
@@ -52,7 +40,7 @@ const N = 6 * 12;
 const totalPossibilities = combinations(N, 2);
 
 // Randomly pick one item from each category to form a composite.
-// The composite id is built by joining the real _id from each selected item using '|'.
+// The composite id is built by joining the real _id from each selected item using '|'. ex: 1|2|3|4|5|6
 function getRandomComposite() {
   const composite = {};
   // Randomly select one item per category
@@ -62,23 +50,16 @@ function getRandomComposite() {
     composite[category._id] = items[randomIndex];
   }
   
-  // Build composite id by joining selected items' _id values with '|'
   const compositeIdString = categories
     .map(category => composite[category._id]._id)
     .join('|');
-  
-  console.log(`Generated composite ID: ${compositeIdString}`);
   return { composite, compositeIdString };
 }
 
-const SAMPLE_COUNT = totalPossibilities;
-
 async function generateCompositesMappingAndImages() {
-  console.log("Starting composite mapping generation...");
   const compositesMapping = [];
   const composites = [];
-  
-  for (let i = 0; i < SAMPLE_COUNT; i++) {
+  for (let i = 0; i < totalPossibilities; i++) {
     const compositeData = getRandomComposite();
     compositesMapping.push({
       id: compositeData.compositeIdString,
@@ -89,14 +70,11 @@ async function generateCompositesMappingAndImages() {
   
   fs.writeFileSync(mappingOutputFile, JSON.stringify(compositesMapping, null, 2));
   console.log(`Composite mapping written to ${mappingOutputFile}`);
-  console.log("Starting image processing...");
   await processComposites(composites);
 }
 
 async function processComposites(composites) {
   try {
-    console.log(`Processing ${composites.length} composite definitions`);
-
     for (const { composite, compositeIdString } of composites) {
       console.log(`Processing composite: ${compositeIdString}`);
 
@@ -111,7 +89,6 @@ async function processComposites(composites) {
       });
 
       const compositeLayers = [];
-
       // For each category, process the selected item's images
       for (const category of categories) {
         const catId = category._id;

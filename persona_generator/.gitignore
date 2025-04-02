@@ -135,3 +135,5 @@ package-lock.json
 
 output
 *.txt
+
+composites_map.json
