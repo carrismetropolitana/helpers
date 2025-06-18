@@ -35,7 +35,7 @@ const generateQRCodes = async () => {
 
 		for (const row of allData) {
 			const filePath = CONFIGS.destination_path + '/' + row.id + '.png';
-			QRCode.toFile(filePath, row.url, { errorCorrectionLevel: 'H', margin: 1, width: 750 });
+			await QRCode.toFile(filePath, row.url, { errorCorrectionLevel: 'H', margin: 0, width: 750 });
 			console.log(`QR Code generated for ID: ${row.id} at ${filePath}`);
 		}
 	}

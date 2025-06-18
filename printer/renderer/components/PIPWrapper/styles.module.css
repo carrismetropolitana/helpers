@@ -1,0 +1,29 @@
+/* stylelint-disable unit-allowed-list */
+
+/* * */
+/* CONTAINER */
+
+.container {
+  position: relative;
+  width: 2560px;
+  height: 1440px;
+  background-color: white;
+}
+
+/* * */
+/* CONTENT */
+
+.content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* * */
+/* BACKGROUND IMAGE */
+
+.backgroundImage {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}

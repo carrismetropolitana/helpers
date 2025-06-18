@@ -1,0 +1,41 @@
+html,
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: var(--spg-support-3);
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input,
+textarea {
+  user-select: text;
+}
+
+/* ? */
+/* REMOVE NEXTJS OVERLAYS */
+
+nextjs-portal {
+	display: none;
+  }

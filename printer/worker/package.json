@@ -1,0 +1,33 @@
+{
+	"name": "@carrismetropolitana/helpers-qrcode-generator",
+	"version": "1.0.0",
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
+		"dev": "tsx watch ./src/index.ts",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"start": "node dist/index.js"
+	},
+	"dependencies": {
+		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/timer": "20240627.34.23",
+		"papaparse": "5.5.3",
+		"puppeteer": "24.10.1"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20250418.42.41",
+		"@tmlmobilidade/tsconfig": "20250617.1608.33",
+		"@types/node": "24.0.3",
+		"@types/papaparse": "5.3.16",
+		"resolve-tspaths": "0.8.23",
+		"tsx": "4.20.3",
+		"typescript": "5.8.3"
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"name": "@spginecologia/printer-renderer",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"build": "next build",
+		"bump": "node bump-version.js",
+		"dev": "next dev -p 3006",
+		"lint": "next lint",
+		"start": "next start"
+	},
+	"dependencies": {
+		"@tabler/icons-react": "3.34.0",
+		"next": "15.3.3",
+		"react": "19.1.0",
+		"react-dom": "19.1.0",
+		"sharp": "0.34.2"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20250418.42.41",
+		"@types/node": "24.0.3",
+		"@types/react": "19.1.8",
+		"@types/react-dom": "19.1.6",
+		"typescript": "5.8.3"
+	}
+}
