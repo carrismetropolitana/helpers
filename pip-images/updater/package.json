@@ -1,5 +1,5 @@
 {
-	"name": "@carrismetropolitana/helpers-qrcode-generator",
+	"name": "@carrismetropolitana/helpers-pip-images-updater",
 	"version": "1.0.0",
 	"type": "module",
 	"files": [
@@ -17,15 +17,12 @@
 	},
 	"dependencies": {
 		"@helperkits/logger": "20250628.901.58",
-		"@helperkits/timer": "20240627.34.23",
-		"papaparse": "5.5.3",
-		"puppeteer": "24.14.0"
+		"@helperkits/timer": "20240627.34.23"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250622.1204.50",
 		"@tmlmobilidade/tsconfig": "20250716.1214.55",
 		"@types/node": "24.0.14",
-		"@types/papaparse": "5.3.16",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.20.3",
 		"typescript": "5.8.3"
