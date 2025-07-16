@@ -149,16 +149,17 @@ ors:
       #          WaySurfaceType:
       #          HillIndex:
       #          TrailDifficulty:
-      walking:
-        profile: foot-walking
-        encoder_options:
-        block_fords: false
-        elevation: true
-        ext_storages:
-          WayCategory:
-          WaySurfaceType:
-          HillIndex:
-          TrailDifficulty:
+      # foot-walking:
+        # enabled: true
+        # profile: foot-walking
+        # encoder_options:
+        # block_fords: false
+        # elevation: true
+        # ext_storages:
+        #   WayCategory:
+        #   WaySurfaceType:
+        #   HillIndex:
+        #   TrailDifficulty:
 #      hiking:
 #        profile: foot-hiking
 #        encoder_options:

@@ -18,7 +18,8 @@ export default function Page() {
 	// A. Setup variables
 
 	const searchParams = useSearchParams();
-	const pipId = searchParams.get('id') || 'N/A';
+	const pipId = searchParams.get('id') ?? 'N/A';
+	const pipStatus = searchParams.get('status') ?? 'N/A';
 
 	const qrCodeUrl = `https://storage.carrismetropolitana.pt/static/pips/qr-codes/${pipId}.png`;
 
@@ -29,6 +30,7 @@ export default function Page() {
 		<PIPWrapper backgroundImageSrc={BackgroundImage.src}>
 			<Image alt="qrcode" className={styles.qrCode} height={750} src={qrCodeUrl} width={750} />
 			<p className={styles.pipId}>{pipId}</p>
+			<p className={styles.pipStatus}>{pipStatus}</p>
 		</PIPWrapper>
 	);
 

@@ -131,7 +131,7 @@ async function getDirectionsBetweenTwoPoints(pointA, pointB) {
   await delay(0); // Introduce artificial delay to avoid hitting any rate-limits
 
   //   const requestUrl = 'https://api.openrouteservice.org/v2/directions/foot-walking';
-  const requestUrl = 'http://localhost:8080/ors/v2/directions/foot-walking';
+  const requestUrl = 'http://localhost:8080/ors/v2/directions/driving-car';
 
   const requestHeaders = {
     Accept: 'application/json, application/geo+json; charset=utf-8',
@@ -140,15 +140,18 @@ async function getDirectionsBetweenTwoPoints(pointA, pointB) {
   };
 
   const requestBody = {
-    units: 'm',
-    geometry: false,
-    elevation: false,
-    preference: 'shortest',
+    // units: 'm',
+    // geometry: false,
+	// // profile: 'driving-car',
+    // elevation: false,
+    // preference: 'shortest',
     coordinates: [pointA, pointB],
   };
 
   const directionsApiResponse = await fetch(requestUrl, { method: 'POST', headers: requestHeaders, body: JSON.stringify(requestBody) });
   const directionsApiData = await directionsApiResponse.json();
+
+  console.log('directionsApiData', directionsApiData)
 
   const directionsDataSorted = directionsApiData.routes?.sort((a, b) => a.summary.duration - b.summary.duration);
   return directionsDataSorted;

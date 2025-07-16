@@ -52,6 +52,7 @@ const formatFeatures = async () => {
 
 		municipalityFeature.id = municipalityFeature.properties.id;
 
+		municipalityFeature.properties['district_id'] = municipalityFeature.properties.id.substring(0, 2);
 		municipalityFeature.properties['area_ha'] = municipalityFeature.properties['Area_ha'];
 
 		delete municipalityFeature.properties['Area_ha'];
@@ -84,6 +85,8 @@ const formatFeatures = async () => {
 
 		parishFeature.id = parishFeature.properties.id;
 
+		parishFeature.properties['district_id'] = parishFeature.properties.id.substring(0, 2);
+		parishFeature.properties['municipality_id'] = parishFeature.properties.id.substring(0, 4);
 		parishFeature.properties['area_ha'] = parishFeature.properties['Area_ha'];
 
 		delete parishFeature.properties['Area_ha'];
@@ -125,7 +128,9 @@ const formatFeatures = async () => {
 			localityFeature.properties['id'] = localityFeature.properties['LUG11'];
 
 			localityFeature.properties['name'] = localityFeature.properties['FIRST_LUG11DESIG'];
-			localityFeature.properties['dicofre'] = `${localityFeature.properties['FIRST_DICOFRE']}`.padStart(6, '0');
+			localityFeature.properties['district_id'] = `${localityFeature.properties['FIRST_DICOFRE']}`.padStart(6, '0').substring(0, 2);
+			localityFeature.properties['municipality_id'] = `${localityFeature.properties['FIRST_DICOFRE']}`.padStart(6, '0').substring(0, 4);
+			localityFeature.properties['parish_id'] = `${localityFeature.properties['FIRST_DICOFRE']}`.padStart(6, '0');
 
 			delete localityFeature.properties['OBJECTID'];
 			delete localityFeature.properties['LUG11'];
