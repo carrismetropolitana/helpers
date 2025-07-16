@@ -16,15 +16,15 @@
 		"start": "node dist/index.js"
 	},
 	"dependencies": {
-		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
 		"papaparse": "5.5.3",
-		"puppeteer": "24.10.1"
+		"puppeteer": "24.14.0"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20250418.42.41",
-		"@tmlmobilidade/tsconfig": "20250617.1608.33",
-		"@types/node": "24.0.3",
+		"@carrismetropolitana/eslint": "20250622.1204.50",
+		"@tmlmobilidade/tsconfig": "20250716.1214.55",
+		"@types/node": "24.0.14",
 		"@types/papaparse": "5.3.16",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.20.3",
