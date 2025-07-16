@@ -21,7 +21,7 @@ interface JobData {
 (async function init() {
 	//
 
-	const allJobsCsv = Papa.parse(fs.readFileSync('./jobs-fallback.csv', { encoding: 'utf-8' }), { header: true });
+	const allJobsCsv = Papa.parse(fs.readFileSync('./jobs.csv', { encoding: 'utf-8' }), { header: true });
 	const allJobsData = allJobsCsv.data as JobData[];
 
 	// Setup browser instance on init
