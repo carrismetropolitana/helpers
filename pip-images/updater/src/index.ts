@@ -1,19 +1,33 @@
 /* * */
 
 import fs from 'fs';
-import Papa from 'papaparse';
-import puppeteer from 'puppeteer';
 
 /* * */
 
-const OUTPUT_DIRECTORY = '../output';
-const RENDERER_URL = 'http://localhost:3006';
+const LIST_ALL_PANELS_URL = process.env.LIST_ALL_PANELS_URL ?? '';
+const SINGLE_PANEL_URL = process.env.SINGLE_PANEL_URL ?? '';
 
 /* * */
 
-interface JobData {
+interface PanelDetail {
+	baseInformation: {
+		identifier: '159'
+	}
 	id: string
-	render_path: string
+	name: string
+	operation: {
+		fallbackImage: string
+	}
+}
+
+interface PanelSummary {
+	id: string
+	name: string
+}
+
+interface PanelsListResponse {
+	results: PanelSummary[]
+	totalResults: number
 }
 
 /* * */
@@ -21,75 +35,52 @@ interface JobData {
 (async function init() {
 	//
 
-	const allJobsCsv = Papa.parse(fs.readFileSync('./jobs.csv', { encoding: 'utf-8' }), { header: true });
-	const allJobsData = allJobsCsv.data as JobData[];
+	const allPanelsRes = await fetch(LIST_ALL_PANELS_URL);
+	const allPanelsData = await allPanelsRes.json() as PanelsListResponse;
 
-	// Setup browser instance on init
-	const BROWSER_INSTANCE = await puppeteer.launch({
-		headless: true,
-		// executablePath: 'google-chrome-stable',
-		args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-		defaultViewport: {
-			height: 1440,
-			width: 2560,
-		},
-	});
-
-	// Initiate a new page on the browser
-	const browserPage = await BROWSER_INSTANCE.newPage();
-
-	for (const jobData of allJobsData) {
+	for (const panelData of allPanelsData.results) {
+		try {
 		//
 
-		// Create an empty directory in the given path if it does not yet exists
-		if (!fs.existsSync(OUTPUT_DIRECTORY)) fs.mkdirSync(OUTPUT_DIRECTORY);
+			const singlePanelRes = await fetch(`${SINGLE_PANEL_URL}/${panelData.id}`);
+			const singlePanelData = await singlePanelRes.json() as PanelDetail;
 
-		try {
-			//
+			const panelIdentifier = singlePanelData.baseInformation.identifier;
 
-			// Build the complete URL to be rendered
-			const completeUrl = `${RENDERER_URL}${jobData.render_path}`;
+			const fallbackImageData = fs.readFileSync(`./images/${panelIdentifier}.png`, 'base64');
+			const base64ImageData = `data:image/png;base64,${fallbackImageData}`;
 
-			// Navigate to the URL
-			await browserPage.goto(completeUrl, { timeout: 5000, waitUntil: 'networkidle0' });
-
-			// Set media-type to reflect CSS used for screens instead of print
-			await browserPage.emulateMediaType('screen');
-
-			// Print the PDF
-			const pngData = await browserPage.screenshot({
-				captureBeyondViewport: false,
-				clip: {
-					height: 1440,
-					width: 2560,
-					x: 0,
-					y: 0,
+			const updatePanelRes = await fetch(`${SINGLE_PANEL_URL}/${panelData.id}`, {
+				body: JSON.stringify({
+					...singlePanelData,
+					operation: {
+						...singlePanelData.operation,
+						fallbackImage: base64ImageData,
+					},
+				}),
+				headers: {
+					'Content-Type': 'application/json',
 				},
-				type: 'png',
+				method: 'PUT',
 			});
 
-			// Save the PDF to the shared volume on disk
-			fs.writeFileSync(`${OUTPUT_DIRECTORY}/${jobData.id}.png`, pngData);
+			if (!updatePanelRes.ok) {
+				console.error(`Failed to update panel ${panelData.id}:`, await updatePanelRes.text());
+				continue;
+			}
 
-			// Log progress
-			console.log(`→ code: ${jobData.id}`);
-
-			//
-		}
-		catch (err) {
-			console.log('🔴 → Error printing "%s"', `${RENDERER_URL}${jobData.render_path}`, err);
-		}
+			console.log(`Updated panel ${panelData.id} with identifier ${panelIdentifier}.`);
 
 		//
+		}
+		catch (error) {
+			console.error(`Error processing panel ${panelData.id}:`, error);
+			continue;
+		}
 	}
 
-	// Close the page
-	await browserPage.close();
-
-	await BROWSER_INSTANCE.close();
-
 	// Log elapsed time for the current operation
-	console.log(`→ Task completed: Worked on ${allJobsData.length} jobs.`);
+	console.log(`→ Task completed: Worked on ${allPanelsData.results.length} jobs.`);
 	console.log(`------------------------------------------------------------------------`);
 	console.log();
 
