@@ -89,7 +89,7 @@ interface JobData {
 	await BROWSER_INSTANCE.close();
 
 	// Log elapsed time for the current operation
-	console.log(`→ Task completed: Worked on ${allJobsCsv.data.length} jobs.`);
+	console.log(`→ Task completed: Worked on ${allJobsData.length} jobs.`);
 	console.log(`------------------------------------------------------------------------`);
 	console.log();
 
