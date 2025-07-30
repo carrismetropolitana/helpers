@@ -11,7 +11,7 @@ const SINGLE_PANEL_URL = process.env.SINGLE_PANEL_URL ?? '';
 
 interface PanelDetail {
 	baseInformation: {
-		identifier: '159'
+		identifier: string
 	}
 	id: string
 	name: string
@@ -21,13 +21,8 @@ interface PanelDetail {
 }
 
 interface PanelSummary {
-	id: string
+	id: number
 	name: string
-}
-
-interface PanelsListResponse {
-	results: PanelSummary[]
-	totalResults: number
 }
 
 /* * */
@@ -36,11 +31,11 @@ interface PanelsListResponse {
 	//
 
 	const allPanelsRes = await fetch(LIST_ALL_PANELS_URL);
-	const allPanelsData = await allPanelsRes.json() as PanelsListResponse;
+	const allPanelsData = await allPanelsRes.json() as PanelSummary[];
 
-	for (const panelData of allPanelsData.results) {
+	for (const panelData of allPanelsData) {
 		try {
-		//
+			//
 
 			const singlePanelRes = await fetch(`${SINGLE_PANEL_URL}/${panelData.id}`);
 			const singlePanelData = await singlePanelRes.json() as PanelDetail;
@@ -80,7 +75,7 @@ interface PanelsListResponse {
 	}
 
 	// Log elapsed time for the current operation
-	console.log(`→ Task completed: Worked on ${allPanelsData.results.length} jobs.`);
+	console.log(`→ Task completed: Worked on ${allPanelsData.length} jobs.`);
 	console.log(`------------------------------------------------------------------------`);
 	console.log();
 
