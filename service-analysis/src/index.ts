@@ -1,21 +1,21 @@
 /* * */
-/* SERVICE ANALYSIS */
-/* * */
 
-// require('dotenv').config();
-
-/* * */
-
-const SETTINGS = {
-	max_travel_time_seconds: 600, // seconds
-	service_radius_meters: 500, // meters
-};
+import fs from 'fs';
+import Papa from 'papaparse';
 
 /* * */
 
-const turf = require('@turf/turf');
-const fs = require('fs');
-const Papa = require('papaparse');
+interface Pmo {
+	id: string
+	lat: number
+	lon: number
+}
+
+interface Stop {
+	id: string
+	lat: number
+	lon: number
+}
 
 /* * */
 
@@ -34,10 +34,10 @@ const Papa = require('papaparse');
 	console.log('• Reading input file...');
 
 	const allPmosCsv = fs.readFileSync('pmos.csv', { encoding: 'utf8' });
-	const allPmosData = Papa.parse(allPmosCsv, { header: true });
+	const allPmosData = Papa.parse<Pmo>(allPmosCsv, { header: true });
 
 	const allStopsCsv = fs.readFileSync('paragens.csv', { encoding: 'utf8' });
-	const allStopsData = Papa.parse(allStopsCsv, { header: true });
+	const allStopsData = Papa.parse<Stop>(allStopsCsv, { header: true });
 
 	//
 	// For each PMO entry,
@@ -46,48 +46,37 @@ const Papa = require('papaparse');
 	for (const pmoData of allPmosData.data) {
 		//
 
+		console.log('• Processing PMO ' + pmoData.id + '...');
+
+		const pmoResult = [];
+
 		//
 		// Calculate travel distance for each stop
 
 		for (const stopData of allStopsData.data) {
 			const routeOptions = await getDirectionsBetweenTwoPoints([pmoData.lon, pmoData.lat], [stopData.lon, stopData.lat]);
-			console.log('routeOptions', routeOptions);
-			// console.log(`• (${pmoData.id}) ${pmoData.name} > (${stopData.id}) ${stopData.name} > ${routeOptions[0].summary.distance} meters`);
-			return;
+			if (routeOptions.length === 0) continue;
+			pmoResult.push({
+				distance: routeOptions[0].summary.distance,
+				duration: routeOptions[0].summary.duration,
+				pmo_id: pmoData.id,
+				stop_id: stopData.id,
+			});
 		}
 
 		//
-		// 3.4.
-		// Save analysis result for this location
+		// Save analysis result for this PMO
 
-		// const analysisResult = {
-		// 	id: locationData.id,
-		// 	lat: locationData.lat,
-		// 	lon: locationData.lon,
-		// 	name: locationData.name,
-		// 	stops: Array.from(stopIdsThatServeThisLocation).join('|'),
-		// };
-
-		// serviceAnalysisResult.push(analysisResult);
-
-		// console.log(`• (${analysisResult.id}) ${analysisResult.name} > [${analysisResult.stops}]`);
+		console.log('• Saving pmoResult to CSV file...');
+		const pmoResultCsv = Papa.unparse(pmoResult, { skipEmptyLines: 'greedy' });
+		fs.writeFileSync(`pmoResult_${pmoData.id}.csv`, pmoResultCsv);
+		console.log('• Done! Updated ' + pmoResult.length + ' records.');
 
 		//
 	}
 
-	//
-	// 4.
-	// Save analysis result to CSV table
-
-	console.log('• Saving service analysis result to CSV file...');
-	const serviceAnalysisCsv = Papa.unparse(serviceAnalysisResult, { skipEmptyLines: 'greedy' });
-	fs.writeFileSync(`service_analysis_result_.csv`, serviceAnalysisCsv);
-	console.log('• Done! Updated ' + serviceAnalysisResult.length + ' postal codes.');
-
-	//
-
-	const syncDuration = new Date() - start;
-	console.log('> Operation took ' + syncDuration / 1000 + ' seconds.');
+	// const syncDuration = new Date() - start;
+	// console.log('> Operation took ' + syncDuration / 1000 + ' seconds.');
 	console.log('* * * * * * * * * * * * * * * * * * * * * * * * * *');
 	console.log();
 
@@ -96,7 +85,16 @@ const Papa = require('papaparse');
 
 /* * */
 
-async function getDirectionsBetweenTwoPoints(pointA, pointB) {
+interface OrsResponse {
+	routes: {
+		summary: {
+			distance: number // in meters
+			duration: number // in seconds
+		}
+	}[]
+}
+
+async function getDirectionsBetweenTwoPoints(pointA, pointB): Promise<OrsResponse['routes']> {
 	//
 
 	await delay(0); // Introduce artificial delay to avoid hitting any rate-limits
@@ -111,20 +109,18 @@ async function getDirectionsBetweenTwoPoints(pointA, pointB) {
 	};
 
 	const requestBody = {
-		// units: 'm',
+		units: 'm',
 		// geometry: false,
-		// profile: 'driving-car',
+		profile: 'driving-car',
 		// elevation: false,
 		// preference: 'shortest',
 		coordinates: [pointA, pointB],
 	};
 
 	const directionsApiResponse = await fetch(requestUrl, { body: JSON.stringify(requestBody), headers: requestHeaders, method: 'POST' });
-	const directionsApiData = await directionsApiResponse.json();
+	const directionsApiData = await directionsApiResponse.json() as OrsResponse;
 
-	console.log('directionsApiData', directionsApiData);
-
-	return directionsApiData.routes?.sort((a, b) => a.summary.duration - b.summary.duration);
+	return directionsApiData.routes?.sort((a, b) => a.summary.distance - b.summary.distance) ?? [];
 
 	//
 }
