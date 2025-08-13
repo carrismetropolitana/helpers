@@ -1,0 +1,7 @@
+ors:
+  engine:
+    source_file: /home/ors/pbf/portugal-latest.osm.pbf
+    profiles:
+      car:
+        enabled: true
+        profile: driving-car

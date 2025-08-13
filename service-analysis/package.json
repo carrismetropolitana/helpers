@@ -1,13 +1,33 @@
 {
-    "name": "@carrismetropolitana/helpers-service-analysis",
-    "version": "1.0.0",
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js"
-    },
-    "dependencies": {
-        "@turf/turf": "6.5.0",
-        "dotenv": "^16.3.1",
-        "papaparse": "5.4.1"
-    }
+	"name": "@carrismetropolitana/helpers-service-analysis",
+	"version": "1.0.0",
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
+		"dev": "tsx watch ./src/index.ts",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"rinse": "npx --yes @tmlmobilidade/repo-rinse",
+		"start": "node dist/index.js"
+	},
+	"dependencies": {
+		"@turf/turf": "7.2.0",
+		"dotenv": "17.2.1",
+		"papaparse": "5.5.3"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20250622.1204.50",
+		"@tmlmobilidade/tsconfig": "20250716.1214.55",
+		"@types/node": "24.0.14",
+		"@types/papaparse": "5.3.16",
+		"resolve-tspaths": "0.8.23",
+		"tsx": "4.20.3",
+		"typescript": "5.8.3"
+	}
 }
