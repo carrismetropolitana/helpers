@@ -60,7 +60,11 @@ interface Stop {
 				distance: routeOptions[0].summary.distance,
 				duration: routeOptions[0].summary.duration,
 				pmo_id: pmoData.id,
+				pmo_lat: pmoData.lat,
+				pmo_lon: pmoData.lon,
 				stop_id: stopData.id,
+				stop_lat: stopData.lat,
+				stop_lon: stopData.lon,
 			});
 		}
 
@@ -69,7 +73,7 @@ interface Stop {
 
 		console.log('• Saving pmoResult to CSV file...');
 		const pmoResultCsv = Papa.unparse(pmoResult, { skipEmptyLines: 'greedy' });
-		fs.writeFileSync(`pmoResult_${pmoData.id}.csv`, pmoResultCsv);
+		fs.writeFileSync(`./output/pmoResult_${pmoData.id}.csv`, pmoResultCsv);
 		console.log('• Done! Updated ' + pmoResult.length + ' records.');
 
 		//
