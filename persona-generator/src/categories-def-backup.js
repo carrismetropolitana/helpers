@@ -1,5 +1,5 @@
 export const categories = [
-    { 
+    {
         _id: "Base",
         items: [
             {
@@ -10,7 +10,7 @@ export const categories = [
             }
         ]
     },
-    { 
+    {
         _id: "Orelhas",
         items: [
             {
@@ -51,7 +51,7 @@ export const categories = [
             }
         ]
     },
-    { 
+    {
         _id: "Tattoos",
         items: [
             {
@@ -68,7 +68,7 @@ export const categories = [
             }
         ]
     },
-    { 
+    {
         _id: "Roupa",
         items: [
             {
@@ -82,6 +82,14 @@ export const categories = [
                 images: [
                     { filename: "2_Pérolas.png", order: 4 },
                 ],
+				forbidden_combinations: [
+					{ _id: "TODAS AS BARBAS" },
+					{ _id: "TODAS AS TATTOOS" },
+					{ _id: "CABELO 4_Crista" },
+					{ _id: "CABELO rapado" },
+					{ _id: "CABELO 1_Mullet" },
+					{ _id: "CABELO careca" },
+				]
             },
             {
                 _id: "camisa_roxa",
@@ -100,6 +108,9 @@ export const categories = [
                 images: [
                     { filename: "5_Top_Azul_Mar.png", order: 4 },
                 ],
+				forbidden_combinations: [
+					{ _id: "TODAS AS BARBAS" }
+				]
             },
             {
                 _id: "sweatshirt_amarela",
@@ -109,7 +120,7 @@ export const categories = [
             },
         ]
     },
-    { 
+    {
         _id: "Cabelo",
         items: [
             {
@@ -118,6 +129,10 @@ export const categories = [
                     { filename: "12_Afro_Back.png", order: 0 },
                     { filename: "5_Mini_Afro.png", order: 5 },
                 ],
+				forbidden_combinations: [
+					{ _id: "TODAS AS ORELHAS" },
+					{ _id: "BARBA comprida" }
+				]
             },
             {
                 _id: "mullet",
@@ -136,6 +151,10 @@ export const categories = [
                 images: [
                     { filename: "3_Bob.png", order: 5 },
                 ],
+				forbidden_combinations: [
+					{ _id: "TODAS AS BARBAS" },
+					{ _id: "MANGA CAVA" }
+				]
             },
             {
                 _id: "crista",
@@ -148,12 +167,20 @@ export const categories = [
                 images: [
                     { filename: "2_Popa.png", order: 5 },
                 ],
+				forbidden_combinations: [
+					{ _id: "TODAS AS ORELHAS" },
+					{ _id: "BARBA comprida" }
+				]
             },
             {
                 _id: "liso",
                 images: [
                     { filename: "6_Liso.png", order: 5 },
                 ],
+				forbidden_combinations: [
+					{ _id: "ORELHA 3_C_Argola" },
+					{ _id: "ORELHA 4_C_Argola_XL" }
+				]
             },
             {
                 _id: "careca",
@@ -172,6 +199,12 @@ export const categories = [
                 images: [
                     { filename: "9_Encaraculado.png", order: 5 },
                 ],
+				forbidden_combinations: [
+					{ _id: "ORELHA 3_C_Argola" },
+					{ _id: "ORELHA 4_C_Argola_XL" },
+					{ _id: "BARBA 2_Comprida" },
+					{ _id: "MANGA CAVA" }
+				]
             },
             {
                 _id: "buzzcut",
@@ -184,13 +217,23 @@ export const categories = [
                 images: [
                     { filename: "11_Daenerys.png", order: 5 },
                 ],
+				forbidden_combinations: [
+					{ _id: "TODAS AS BARBAS" },
+					{ _id: "MANGA CAVA" }
+				]
             }
         ]
     },
-    
-    { 
+
+    {
         _id: "Barbas",
         items: [
+            {
+                _id: "sem_barba",
+                images: [
+                    { filename: "0_Sem_Barba.png", order: 6},
+                ],
+            },
             {
                 _id: "por_fazer",
                 images: [
@@ -202,6 +245,10 @@ export const categories = [
                 images: [
                     { filename: "2_Comprida.png", order: 6 },
                 ],
+				forbidden_combinations: [
+					{ _id: "ORELHA 3_C_Argola" },
+					{ _id: "ORELHA 4_C_Argola_XL" }
+				]
             },
             {
                 _id: "p_fazer_bigode",
@@ -223,7 +270,7 @@ export const categories = [
             }
         ]
     },
-    { 
+    {
         _id: "Acessórios",
         items: [
             {
