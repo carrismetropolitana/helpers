@@ -1,13 +1,12 @@
 /* * */
 
+import { categories } from '@/categories.js';
+import { generateCombinations } from '@/utils/generate-cartesian-product.js';
+import { isValidOutfit } from '@/utils/is-valid-outfit.js';
 import LOGGER from '@helperkits/logger';
 import fs from 'node:fs';
-import path from 'path';
+import path from 'node:path';
 import sharp from 'sharp';
-
-import { categories } from './categories.js';
-import { generateCombinations } from './utils/generate-cartesian-product.js';
-import { isValidOutfit } from './utils/is-valid-outfit.js';
 
 /* * */
 
@@ -53,7 +52,7 @@ const imagesBaseDir = './assets';
 	// For each combination, build the layers
 	// and export the image using the sharp package
 
-	for (const outfitData of validOutfitCombinations) {
+	for (const [index, outfitData] of validOutfitCombinations.entries()) {
 		//
 
 		//
@@ -106,7 +105,7 @@ const imagesBaseDir = './assets';
 		const outputFilePath = path.join(outputDir, `${outfitData.outfit_id}.png`);
 		await outputComposite.png().toFile(outputFilePath);
 
-		console.log(`Composite image created: ${outfitData.outfit_id}`);
+		LOGGER.info(`[${index + 1}/${validOutfitCombinations.length}] ${outfitData.outfit_id}`);
 
 		//
 	}
