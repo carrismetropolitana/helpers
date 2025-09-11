@@ -13,6 +13,9 @@ import sharp from 'sharp';
 const outputDir = './output';
 const imagesBaseDir = './assets';
 
+// Track generated images for composite_map.json as an array
+const compositeMap: { id: string, url: string }[] = [];
+
 /* * */
 
 (async () => {
@@ -103,12 +106,17 @@ const imagesBaseDir = './assets';
 		const outputComposite = transparentCanvas.composite(sortedLayers);
 
 		const outputFilePath = path.join(outputDir, `${outfitData.outfit_id}.png`);
+		compositeMap.push({
+			id: outfitData.outfit_id,
+			url: `${outfitData.outfit_id}.png`,
+		});
+
 		await outputComposite.png().toFile(outputFilePath);
 
 		LOGGER.info(`[${index + 1}/${validOutfitCombinations.length}] ${outfitData.outfit_id}`);
-
 		//
 	}
 
-	//
+	// Write composite_map.json after all images are generated
+	fs.writeFileSync(path.join(outputDir, 'composite_map.json'), JSON.stringify(compositeMap, null, 2), 'utf-8');
 })();
