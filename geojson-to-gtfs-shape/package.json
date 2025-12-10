@@ -1,12 +1,32 @@
 {
-    "name": "@carrismetropolitana/helpers-geojson-to-gtfs-shape",
-    "version": "1.0.0",
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js"
-    },
-    "dependencies": {
-        "@turf/turf": "6.5",
-        "papaparse": "^5.4.1"
-    }
+	"name": "@carrismetropolitana/helpers-geojson-to-gtfs-shape",
+	"version": "1.0.0",
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc && resolve-tspaths",
+		"dev": "tsx watch ./src/index.ts",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"start": "node dist/index.js"
+	},
+	"dependencies": {
+		"@helperkits/logger": "20250628.901.58",
+		"@helperkits/timer": "20240627.34.23",
+		"@turf/turf": "7.3.1",
+		"papaparse": "5.5.3"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20251107.1231.48",
+		"@tmlmobilidade/tsconfig": "20251206.1045.7",
+		"@types/node": "24.10.2",
+		"@types/papaparse": "5.5.1",
+		"resolve-tspaths": "0.8.23",
+		"tsx": "4.21.0",
+		"typescript": "5.9.3"
+	}
 }
