@@ -21,9 +21,12 @@ import Papa from 'papaparse';
 	for (const feature of geojsonData.features) {
 		//
 
-		const patternId = 'verde';
+		const patternId = 'verde-rev';
 
 		let cumulativeDistance = 0;
+
+		// Invert loop to calculate distances
+		feature.geometry.coordinates.reverse();
 
 		// Setup the first point for the shape
 		allShapesData.push({
@@ -33,9 +36,6 @@ import Papa from 'papaparse';
 			shape_pt_lon: feature.geometry?.coordinates[0][0].toFixed(6),
 			shape_pt_sequence: 0,
 		});
-
-		// Invert loop to calculate distances
-		// feature.geometry?.coordinates[0].reverse();
 
 		for (let index = 1; index < feature.geometry?.coordinates.length; index++) {
 			// Calculate distance for this segment
