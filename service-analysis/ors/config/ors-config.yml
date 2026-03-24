@@ -1,7 +1,26 @@
+##### openrouteservice settings file #####
+# This file contains parameters for openrouteservice.
+# For a full list of possible parameters see https://giscience.github.io/openrouteservice/run-instance/configuration/
+springdoc:
+ swagger-ui:
+   enabled: true
+   path: /swagger-ui
+   tryItOutEnabled: true
+   filter: false
+   syntaxHighlight:
+     activated: true
+   showExtensions: true
+ api-docs:
+   path: /v2/api-docs
+   version: OPENAPI_3_0
+ packages-to-scan: org.heigit.ors
+ pathsToMatch: /v2/**
 ors:
   engine:
-    source_file: /home/ors/pbf/portugal-latest.osm.pbf
+    source_file: /home/ors/files/example-heidelberg.osm.gz
     profiles:
       car:
         enabled: true
-        profile: driving-car
+      foot-walking:
+        enabled: true
+        profile: foot-walking

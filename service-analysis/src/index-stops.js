@@ -7,14 +7,14 @@ import 'dotenv/config';
 /* * */
 
 const SETTINGS = {
-  service_radius_meters: 400, // meters
-  max_travel_time_seconds: 300, // seconds
+  service_radius_meters: 90000000000000000000000000000000, // meters
+  max_travel_time_seconds: 9000000000, // seconds
 };
 
 /* * */
 
 import { readFileSync, writeFileSync } from 'fs';
-import turf from '@turf/turf';
+import { point as _point, buffer, booleanContains } from '@turf/turf';
 
 import Papa from 'papaparse';
 
@@ -60,16 +60,16 @@ const { parse, unparse } = Papa;
     // 3.1.
     // Build service radius for this location
 
-    const locationPoint = turf.point([parseFloat(locationData.lon), parseFloat(locationData.lat)]);
-    const serviceRadius = turf.buffer(locationPoint, SETTINGS.service_radius_meters, { units: 'meters' });
+    const locationPoint = _point([parseFloat(locationData.lon), parseFloat(locationData.lat)]);
+    const serviceRadius = buffer(locationPoint, SETTINGS.service_radius_meters, { units: 'meters' });
 
     //
     // 3.2.
     // Get stops that are inside service radius
 
     const allStopsInsideServiceRadius = allStopsData.filter((stopData) => {
-      const point = turf.point([stopData.lon, stopData.lat]);
-      const serviceRadiusContainsPoint = turf.booleanContains(serviceRadius, point);
+      const point = _point([stopData.lon, stopData.lat]);
+      const serviceRadiusContainsPoint = booleanContains(serviceRadius, point);
       return serviceRadiusContainsPoint;
     });
 
@@ -79,14 +79,26 @@ const { parse, unparse } = Papa;
 
     const stopIdsThatServeThisLocation = new Set();
 
-    for (const stopData of allStopsInsideServiceRadius) {
-      const travelTimeInSecondsFromLocationToStop = await getDirectionsBetweenTwoPoints([locationData.lon, locationData.lat], [stopData.lon, stopData.lat]);
-      if (travelTimeInSecondsFromLocationToStop && travelTimeInSecondsFromLocationToStop.length) {
-        if (travelTimeInSecondsFromLocationToStop[0]?.summary?.duration < SETTINGS.max_travel_time_seconds) {
-          stopIdsThatServeThisLocation.add(stopData.id);
-        }
+   let i = 0;
+  const total = allStopsInsideServiceRadius.length;
+
+  for (const stopData of allStopsInsideServiceRadius) {
+    i++;
+
+    console.log(`Processing ${i}/${total}`);
+
+    const travelTimeInSecondsFromLocationToStop =
+      await getDirectionsBetweenTwoPoints(
+        [locationData.lat, locationData.lon],
+        [stopData.lat, stopData.lon]
+      );
+
+    if (travelTimeInSecondsFromLocationToStop?.length) {
+      if (travelTimeInSecondsFromLocationToStop[0]?.summary?.duration < SETTINGS.max_travel_time_seconds) {
+        stopIdsThatServeThisLocation.add(stopData.id);
       }
     }
+  }
 
     //
     // 3.4.
@@ -133,9 +145,11 @@ async function getDirectionsBetweenTwoPoints(pointA, pointB) {
 
   await delay(0); // Introduce artificial delay to avoid hitting any rate-limits
 
+  console.log(`  - Getting directions between Praia ${pointA} and Stop ${pointB}...`);
 
-  const requestUrl = 'https://api.openrouteservice.org/v2/directions/foot-walking';
-  // const requestUrl = 'http://localhost:8080/ors/v2/directions/driving-car';
+
+  // const requestUrl = 'https://api.openrouteservice.org/v2/directions/foot-walking';
+  const requestUrl = 'http://localhost:8080/ors/v2/directions/foot-walking';
 
   const requestHeaders = {
     Accept: 'application/json, application/geo+json; charset=utf-8',
@@ -144,18 +158,23 @@ async function getDirectionsBetweenTwoPoints(pointA, pointB) {
   };
 
   const requestBody = {
-    // units: 'm',
+    units: 'm',
     // geometry: false,
-	// // profile: 'driving-car',
+	  // // profile: 'driving-car',
     // elevation: false,
-    // preference: 'shortest',
+    // preference: 'shortest'
+    "radiuses": [
+      SETTINGS.service_radius_meters,
+    ],
     coordinates: [pointA, pointB],
   };
 
   const directionsApiResponse = await fetch(requestUrl, { method: 'POST', headers: requestHeaders, body: JSON.stringify(requestBody) });
   const directionsApiData = await directionsApiResponse.json();
 
-  console.log('directionsApiData', directionsApiData)
+  if(!directionsApiData?.error) {
+    console.log('directionsApiData', directionsApiData)
+  }
 
   const directionsDataSorted = directionsApiData.routes?.sort((a, b) => a.summary.duration - b.summary.duration);
   return directionsDataSorted;

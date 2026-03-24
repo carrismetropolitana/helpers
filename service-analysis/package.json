@@ -11,6 +11,7 @@
 		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist",
 		"dev": "tsx watch ./src/index.ts",
+		"dev:js": "tsx watch ./src/index-stops.js",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"rinse": "npx --yes @tmlmobilidade/repo-rinse",
