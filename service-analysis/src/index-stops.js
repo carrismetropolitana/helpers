@@ -2,20 +2,23 @@
 /* SERVICE ANALYSIS */
 /* * */
 
-require('dotenv').config();
+import 'dotenv/config';
 
 /* * */
 
 const SETTINGS = {
-  service_radius_meters: 500, // meters
-  max_travel_time_seconds: 600, // seconds
+  service_radius_meters: 400, // meters
+  max_travel_time_seconds: 300, // seconds
 };
 
 /* * */
 
-const fs = require('fs');
-const Papa = require('papaparse');
-const turf = require('@turf/turf');
+import { readFileSync, writeFileSync } from 'fs';
+import turf from '@turf/turf';
+
+import Papa from 'papaparse';
+
+const { parse, unparse } = Papa;
 
 /* * */
 
@@ -33,8 +36,8 @@ const turf = require('@turf/turf');
   // Read input file and parse data as JSON
 
   console.log('• Reading input file...');
-  const allLocationsCsv = fs.readFileSync('locations_input.csv', { encoding: 'utf8' });
-  const allLocationsData = Papa.parse(allLocationsCsv, { header: true });
+  const allLocationsCsv = readFileSync('Praias_PT.csv', { encoding: 'utf8' });
+  const allLocationsData = parse(allLocationsCsv, { header: true });
 
   //
   // 2.
@@ -109,8 +112,8 @@ const turf = require('@turf/turf');
   // Save analysis result to CSV table
 
   console.log('• Saving service analysis result to CSV file...');
-  const serviceAnalysisCsv = Papa.unparse(serviceAnalysisResult, { skipEmptyLines: 'greedy' });
-  fs.writeFileSync(`service_analysis_result_.csv`, serviceAnalysisCsv);
+  const serviceAnalysisCsv = unparse(serviceAnalysisResult, { skipEmptyLines: 'greedy' });
+  writeFileSync(`service_analysis_result_.csv`, serviceAnalysisCsv);
   console.log('• Done! Updated ' + serviceAnalysisResult.length + ' postal codes.');
 
   //
@@ -130,8 +133,9 @@ async function getDirectionsBetweenTwoPoints(pointA, pointB) {
 
   await delay(0); // Introduce artificial delay to avoid hitting any rate-limits
 
-  //   const requestUrl = 'https://api.openrouteservice.org/v2/directions/foot-walking';
-  const requestUrl = 'http://localhost:8080/ors/v2/directions/driving-car';
+
+  const requestUrl = 'https://api.openrouteservice.org/v2/directions/foot-walking';
+  // const requestUrl = 'http://localhost:8080/ors/v2/directions/driving-car';
 
   const requestHeaders = {
     Accept: 'application/json, application/geo+json; charset=utf-8',
